@@ -1,22 +1,16 @@
 create table public.users (
-  id bigint generated always as identity primary key,
-  login text not null unique,
-  location text,
-  collected_at timestamptz default now()
+  id                    serial primary key,
+  github_id             text unique not null,
+  score                 integer not null default 0,
+  total_contributions   integer,
+  current_streak        integer,
+  longest_streak        integer,
+  contribution_density  float,
+  peak_intensity        integer,
+  percentile            float,
+  tier                  text,
+  tier_rank             integer,
+  updated_at            timestamptz default now()
 );
 
-create table public.scores (
-  id bigint generated always as identity primary key,
-  username text not null unique,
-  total_contributions int default 0,
-  current_streak int default 0,
-  max_streak int default 0,
-  density float default 0,
-  peak_day int default 0,
-  score float default 0,
-  tier text default 'bronze4',
-  percentile float default 100,
-  updated_at timestamptz default now()
-);
-
-create index scores_score_idx on public.scores(score desc);
+create index users_score_idx on public.users(score desc);

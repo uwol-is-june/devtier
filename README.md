@@ -85,3 +85,25 @@ SUPABASE_SERVICE_ROLE_KEY=xxxx
 | --- | --- |
 | `GET /api/score/[username]` | 유저 전투력 점수 및 티어 반환 |
 | `GET /api/badge/[username]` | SVG 뱃지 반환 (캐시 1시간) |
+| `GET /api/ranking` | 전체 랭킹 상위 100명 반환 |
+
+---
+
+## Changelog
+
+### v0.3.0 (2026-04-29)
+- `GET /api/score/[username]` — GitHub GraphQL 조회 → 점수 계산 → DB upsert → tier/rank 산출 → JSON 반환
+- `GET /api/badge/[username]` — tier별 색상 SVG 뱃지 반환, `Cache-Control: public, max-age=3600`
+- `GET /api/ranking` — score 내림차순 상위 100명 + rank 필드 JSON 반환
+
+### v0.2.0 (2026-04-29)
+- `lib/supabase.ts` — Supabase 서버 클라이언트 (service role)
+- `lib/github.ts` — GitHub GraphQL 잔디 데이터 조회 (streak, density, peak 포함)
+- `lib/score.ts` — 전투력 점수 계산 공식 구현
+- `lib/tier.ts` — 백분위 기준 tier/tier_rank 산출 (챌린저 절대 100명 처리)
+- `lib/badge.ts` — tier별 색상 SVG 뱃지 생성
+
+### v0.1.0 (2026-04-29)
+- Next.js 16 프로젝트 초기 세팅
+- Supabase 연동 및 `users` 테이블 마이그레이션
+- 서비스 기획 문서화 (`CLAUDE.md`, `docs/TASKS.md`)
