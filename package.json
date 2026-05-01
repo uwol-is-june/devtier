@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "collect:users": "tsx --env-file=.env.local scripts/collect-users.ts",
+    "collect:scores": "tsx --env-file=.env.local scripts/collect-scores.ts",
+    "recalc:tiers": "tsx --env-file=.env.local scripts/recalc-tiers.ts",
+    "batch:all": "npm run collect:users && npm run collect:scores && npm run recalc:tiers"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.1",
@@ -24,6 +28,7 @@
     "eslint-config-next": "16.2.4",
     "pg": "^8.20.0",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

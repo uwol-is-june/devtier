@@ -5,103 +5,88 @@
 
 ---
 
-## Phase 0: 환경 세팅
+## v0.3.0 — 코어 레이어 ✅
+
+### Phase 0: 환경 세팅
 
 - [x] `.env.local` 환경변수 3종 세팅 확인
   - `GITHUB_TOKEN`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`
 - [x] Supabase 마이그레이션 실행 (`supabase/migrations/20260429000000_init.sql`)
   - `users` 테이블 단일 테이블 구조 확인
 
-**완료 기준:** Supabase 대시보드에서 `users` 테이블 확인, GitHub API 200 응답
-
----
-
-## Phase 1: 공유 유틸리티 레이어
-
-> 이후 API·배치·프론트가 모두 재사용하는 핵심 함수. 이 Phase가 완료돼야 나머지 작업 가능.
+### Phase 1: 공유 유틸리티 레이어
 
 - [x] `lib/supabase.ts` — Supabase 서버 클라이언트 (service role key 사용)
 - [x] `lib/github.ts` — GitHub GraphQL 잔디 데이터 조회 함수
-  - 입력: `username: string`
-  - 출력: `{ total_contributions, current_streak, longest_streak, contribution_density, peak_intensity }`
 - [x] `lib/score.ts` — 전투력 점수 계산 함수
-  - 공식: `total×1 + current_streak×3 + longest_streak×2 + density(%)×100 + peak×0.5`
 - [x] `lib/tier.ts` — 백분위 기준 tier·tier_rank 산출 함수
-  - 챌린저: score 내림차순 상위 100명 절대 고정
-  - 다이아(1~5%), 플래티넘(5~15%), 골드(15~30%), 실버(30~50%), 브론즈(50~100%)
-  - tier_rank: 구간 4등분, 낮은 숫자가 높은 등급
 - [x] `lib/badge.ts` — 티어별 SVG 생성 함수
-  - 입력: `{ github_id, tier, tier_rank, score }`
-  - 출력: SVG 문자열
-  - 형식: `DevTier | 골드 2 | 1234점`
-  - 챌린저 `#FF4655` / 다이아 `#56C8D8` / 플래티넘 `#5AC9A6` / 골드 `#FFD700` / 실버 `#C0C0C0` / 브론즈 `#CD7F32`
 
-**완료 기준:** 각 함수 단독 호출로 예상 출력 확인 가능
-
----
-
-## Phase 2: API 개발
-
-> Phase 1 완료 후 진행.
+### Phase 2: API 개발
 
 - [x] `app/api/score/[username]/route.ts`
-  - `lib/github.ts` → `lib/score.ts` → `lib/tier.ts` 순으로 호출
-  - 결과를 `users` 테이블에 upsert (백분위는 배치 스크립트에서 계산하므로 일단 NULL)
-  - JSON 응답 반환 (명세서 Response 형식 참고)
 - [x] `app/api/badge/[username]/route.ts`
-  - `users` 테이블에서 tier·tier_rank·score 조회
-  - `lib/badge.ts`로 SVG 생성 후 반환
-  - Content-Type: `image/svg+xml`
-  - Cache-Control: `public, max-age=3600`
 - [x] `app/api/ranking/route.ts`
-  - `users` 테이블 score 내림차순 최대 100명 조회
-  - rank 필드 포함하여 JSON 반환
 
-**완료 기준:**
-- `GET /api/score/{username}` → tier·score·percentile 포함 JSON
-- `GET /api/badge/{username}` → 브라우저에서 SVG 렌더링 확인
-- `GET /api/ranking` → 배열 JSON 반환
+### Phase 3: 배치 스크립트
 
----
-
-## Phase 3: 배치 스크립트
-
-> Phase 2 완료 후 진행. `users` 테이블이 충분히 채워져야 백분위 계산이 의미 있음.
-
-- [ ] `scripts/collect-users.ts` — GitHub Search API로 한국 유저 목록 수집
-  - 쿼리 4종 순차 실행 (각 최대 1,000명)
-  - 중복 제거 후 `users` 테이블에 github_id upsert (점수 필드는 초기값)
-- [ ] `scripts/collect-scores.ts` — 전체 유저 점수 계산·저장
-  - `users` 테이블 전체 순회
-  - `lib/github.ts`·`lib/score.ts` 재사용
-  - GitHub API Rate Limit 고려한 딜레이 처리 (5,000 req/hr)
-  - `users` 테이블 score·지표 upsert
-- [ ] `scripts/recalc-tiers.ts` — 전체 백분위·티어 재산출
-  - 전체 유저 score 기준 백분위 계산
-  - `lib/tier.ts` 재사용하여 tier·tier_rank 결정
-  - `users` 테이블 전체 업데이트
-
-**완료 기준:** 스크립트 실행 후 `users` 테이블에 1,000+ 행, tier 필드 채워진 상태 확인
+- [x] `scripts/collect-users.ts` — GitHub Search API로 한국 유저 목록 수집
+- [x] `scripts/collect-scores.ts` — 전체 유저 점수 계산·저장
+- [x] `scripts/recalc-tiers.ts` — 전체 백분위·티어 재산출
 
 ---
 
-## Phase 4: 프론트엔드
+## v0.4.0 — 프론트엔드 MVP + 디자인 시스템 + 3D 아이콘·애니메이션
 
-> Phase 2 완료 후 진행 (API가 있어야 프론트 테스트 가능).
+> v0.5.0에 예정된 디자인 고도화를 v0.4.0으로 앞당겨 반영.
 
-- [ ] `app/page.tsx` — 메인 페이지
-  - GitHub 아이디 입력창 (검색 폼)
-  - 제출 시 `/result/[username]`으로 이동
-  - 하단에 전체 랭킹 테이블 (`/api/ranking` 호출, 최대 100명)
-  - 컬럼: 순위 / GitHub 아이디 / 티어 / 전투력 점수
-- [ ] `app/result/[username]/page.tsx` — 결과 페이지
-  - 티어 카드 (티어명 + 티어 숫자 + 티어 색상)
-  - 전투력 점수 및 세부 지표 5종
+### 디자인 시스템
+
+- [~] `app/globals.css` — 디자인 토큰 (bg/surface/border/text 변수) + keyframe 애니메이션 정의
+- [~] `app/layout.tsx` — 메타데이터 수정, 다크모드 강제, 폰트 정리
+
+### 3D 아이콘 + 애니메이션
+
+- [~] `components/TierIcon.tsx` — 티어별 3D SVG 아이콘
+  - 챌린저: 왕관 + shimmer sweep 애니메이션
+  - 다이아: 젬 + rotate-shimmer 애니메이션
+  - 플래티넘~브론즈: 메달/크리스탈 + glow-pulse 애니메이션
+
+### 클라이언트 컴포넌트
+
+- [~] `components/SearchForm.tsx` — GitHub 아이디 입력 폼 (focus glow, hover 효과)
+- [~] `components/BadgeCopy.tsx` — 뱃지 복사 버튼 ("복사" → "✓ 복사됨" 상태 전환 애니메이션)
+- [~] `components/ScoreCounter.tsx` — 점수 카운트업 애니메이션 (0 → 실제값)
+
+### 페이지
+
+- [~] `app/page.tsx` — 메인 페이지
+  - 다크 히어로 + 그라디언트 텍스트 애니메이션
+  - GitHub 아이디 입력창 → `/result/[username]` 이동
+  - 전체 랭킹 테이블 (hover lift 효과, 행 진입 stagger animation)
+  - 컬럼: 순위 / GitHub 아이디 / 티어 아이콘 / 전투력 점수
+- [~] `app/result/[username]/page.tsx` — 결과 페이지
+  - 티어 카드 (3D 아이콘 + 티어명 + 색상 테두리, fade-in-up 진입)
+  - 전투력 점수 카운트업 애니메이션
+  - 세부 지표 5종 (stagger fade-in)
   - 백분위 표시 ("수집된 한국 개발자 상위 N%")
-  - 뱃지 코드 복사 버튼: `![DevTier](https://devtier.dev/api/badge/{username})`
+  - 뱃지 복사 버튼
   - 주의 문구: "GitHub location을 한국으로 설정한 유저 기준 백분위입니다"
 
-**완료 기준:** 메인 → 아이디 입력 → 결과 페이지 → 뱃지 복사 골든 패스 브라우저 확인
+**완료 기준:** 메인 → 아이디 입력 → 결과 페이지 (3D 아이콘·애니메이션 동작) → 뱃지 복사 골든 패스 브라우저 확인
+
+---
+
+## v0.5.0 — 프리미엄 + 뱃지 애니메이션 고도화
+
+> v0.4.0 MVP 배포 후, 초기 유저 확보 이후 진행.
+
+- [ ] 무료 뱃지 SVG 애니메이션 추가 (idle glow / stroke animation, GitHub README 렌더 호환)
+- [ ] 티어 카드 이미지 다운로드 기능 (PNG export, 트위터 인증샷용)
+
+**완료 기준:** 뱃지 SVG 애니메이션 동작 + 티어 카드 이미지 다운로드 확인
+
+> 프리미엄 뱃지, 인증/결제, 프리미엄 전용 기능 → [BACKLOG.md](BACKLOG.md) 참고
 
 ---
 
@@ -109,30 +94,35 @@
 
 ```
 lib/
-  supabase.ts           # Phase 1
-  github.ts             # Phase 1
-  score.ts              # Phase 1
-  tier.ts               # Phase 1
-  badge.ts              # Phase 1
+  supabase.ts           # v0.3.0
+  github.ts             # v0.3.0
+  score.ts              # v0.3.0
+  tier.ts               # v0.3.0
+  badge.ts              # v0.3.0 / v0.5.0 (SVG 뱃지 애니메이션 추가)
+components/
+  TierIcon.tsx          # v0.4.0 (3D SVG 아이콘 + CSS 애니메이션)
+  SearchForm.tsx        # v0.4.0 (검색 폼, client)
+  BadgeCopy.tsx         # v0.4.0 (뱃지 복사, client)
+  ScoreCounter.tsx      # v0.4.0 (점수 카운트업, client)
 app/
-  page.tsx              # Phase 4 (메인)
+  page.tsx              # v0.4.0 (메인)
   result/
     [username]/
-      page.tsx          # Phase 4 (결과)
+      page.tsx          # v0.4.0 (결과)
   api/
     score/
       [username]/
-        route.ts        # Phase 2
+        route.ts        # v0.3.0
     badge/
       [username]/
-        route.ts        # Phase 2
+        route.ts        # v0.3.0
     ranking/
-      route.ts          # Phase 2
+      route.ts          # v0.3.0
 scripts/
-  collect-users.ts      # Phase 3
-  collect-scores.ts     # Phase 3
-  recalc-tiers.ts       # Phase 3
+  collect-users.ts      # v0.3.0
+  collect-scores.ts     # v0.3.0
+  recalc-tiers.ts       # v0.3.0
 supabase/
   migrations/
-    20260429000000_init.sql  # users 테이블 단일 스키마
+    20260429000000_init.sql       # v0.3.0
 ```
