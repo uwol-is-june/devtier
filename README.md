@@ -3,7 +3,9 @@
 GitHub 잔디(contribution) 데이터로 한국 개발자 전투력을 측정하고 티어를 부여하는 서비스.
 백준 온라인 저지 종료 이후 개발자가 실력을 증명할 새로운 지표.
 
-**도메인:** devtier.dev
+**🌐 [https://devtier-brown.vercel.app](https://devtier-brown.vercel.app)**
+
+> 커스텀 도메인 연결 후 `devtier.dev` 로 변경 예정
 
 ---
 
