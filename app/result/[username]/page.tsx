@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { BadgeCopy } from '@/components/BadgeCopy'
 import { ScoreCounter } from '@/components/ScoreCounter'
+import { ShareButtons } from '@/components/ShareButtons'
 import { TierIcon } from '@/components/TierIcon'
 import { getScoreData, type ScoreData } from '@/lib/getScoreData'
 
@@ -26,6 +28,45 @@ async function fetchScore(username: string): Promise<ScoreData | null> {
     return await getScoreData(username)
   } catch {
     return null
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>
+}): Promise<Metadata> {
+  const { username } = await params
+  const data = await fetchScore(username)
+
+  if (!data) {
+    return { title: `${username} — DevTier` }
+  }
+
+  const tierLabel = TIER_LABEL[data.tier] ?? data.tier
+  const fullTierLabel = data.tier_rank ? `${tierLabel} ${data.tier_rank}` : tierLabel
+  const title = `${data.github_id}의 DevTier — ${fullTierLabel} | ${data.score.toLocaleString('ko-KR')}점`
+  const description = data.percentile !== null
+    ? `수집된 한국 개발자 상위 ${data.percentile.toFixed(1)}% — GitHub 잔디로 측정한 개발자 전투력`
+    : 'GitHub 잔디로 측정한 개발자 전투력'
+  const badgeUrl = `https://devtier.dev/api/badge/${username}`
+  const pageUrl = `https://devtier.dev/result/${username}`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      images: [{ url: badgeUrl, width: 180, height: 56 }],
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+      images: [badgeUrl],
+    },
   }
 }
 
@@ -154,9 +195,19 @@ export default async function ResultPage({
       </section>
 
       {/* ── Badge Copy ── */}
-      <section className="w-full max-w-lg animate-fade-in-up stagger-6">
+      <section className="w-full max-w-lg mb-8 animate-fade-in-up stagger-6">
         <h2 className="text-xs text-[var(--text-sub)] uppercase tracking-widest mb-4">뱃지</h2>
         <BadgeCopy username={data.github_id} />
+      </section>
+
+      {/* ── Share ── */}
+      <section className="w-full max-w-lg animate-fade-in-up stagger-6">
+        <ShareButtons
+          username={data.github_id}
+          score={data.score}
+          tierLabel={fullTierLabel}
+          percentile={data.percentile}
+        />
       </section>
     </main>
   )
