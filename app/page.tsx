@@ -1,5 +1,7 @@
-import { SearchForm } from '@/components/SearchForm'
+import { LoginButton } from '@/components/LoginButton'
+import { LogoutButton } from '@/components/LogoutButton'
 import { TierIcon } from '@/components/TierIcon'
+import { createClient } from '@/lib/supabase-server'
 import { supabase } from '@/lib/supabase'
 
 const TIER_LABEL: Record<string, string> = {
@@ -20,6 +22,69 @@ const TIER_COLOR: Record<string, string> = {
   bronze:     '#CD7F32',
 }
 
+type MyData = {
+  github_id: string
+  score: number
+  tier: string
+  tier_rank: number | null
+  percentile: number | null
+}
+
+function MyTierCard({ data }: { data: MyData }) {
+  const tierColor = TIER_COLOR[data.tier] ?? '#C0C0C0'
+  const tierLabel = TIER_LABEL[data.tier] ?? data.tier
+  const fullTierLabel = data.tier_rank ? `${tierLabel} ${data.tier_rank}` : tierLabel
+
+  return (
+    <div
+      className="flex flex-col items-center gap-4 w-full max-w-sm rounded-lg px-8 py-6"
+      style={{
+        background: 'var(--surface)',
+        border: `1px solid ${tierColor}`,
+        boxShadow: `0 0 16px 2px color-mix(in srgb, ${tierColor} 15%, transparent)`,
+      }}
+    >
+      <TierIcon tier={data.tier} size={56} />
+
+      <div className="text-center">
+        <div className="text-xl font-bold" style={{ color: tierColor }}>{fullTierLabel}</div>
+        <div className="text-[var(--text-sub)] text-sm font-mono mt-0.5">{data.github_id}</div>
+      </div>
+
+      <div className="text-center">
+        <div className="text-3xl font-bold font-mono" style={{ color: tierColor }}>
+          {data.score.toLocaleString('ko-KR')}
+        </div>
+        <div className="text-xs text-[var(--text-sub)] mt-0.5">전투력</div>
+      </div>
+
+      {data.percentile !== null && (
+        <div
+          className="text-xs px-3 py-1 rounded-full"
+          style={{
+            background: `color-mix(in srgb, ${tierColor} 12%, transparent)`,
+            border: `1px solid color-mix(in srgb, ${tierColor} 40%, transparent)`,
+            color: tierColor,
+          }}
+        >
+          상위 {data.percentile.toFixed(1)}%
+        </div>
+      )}
+
+      <div className="flex items-center gap-4 mt-1">
+        <a
+          href={`/result/${data.github_id}`}
+          className="text-sm text-[#58a6ff] hover:underline"
+        >
+          자세히 보기 →
+        </a>
+        <span className="text-[var(--border)]">|</span>
+        <LogoutButton />
+      </div>
+    </div>
+  )
+}
+
 async function getRanking() {
   const { data } = await supabase
     .from('users')
@@ -29,8 +94,24 @@ async function getRanking() {
   return data ?? []
 }
 
+async function getMyData(githubId: string) {
+  const { data } = await supabase
+    .from('users')
+    .select('github_id, score, tier, tier_rank, percentile')
+    .eq('github_id', githubId)
+    .single()
+  return data
+}
+
 export default async function Home() {
-  const ranking = await getRanking()
+  const client = await createClient()
+  const { data: { user } } = await client.auth.getUser()
+  const githubId = user?.user_metadata?.user_name as string | undefined
+
+  const [ranking, myData] = await Promise.all([
+    getRanking(),
+    githubId ? getMyData(githubId) : Promise.resolve(null),
+  ])
 
   return (
     <main className="flex flex-col items-center w-full px-4 pb-24">
@@ -60,7 +141,11 @@ export default async function Home() {
           티어를 부여합니다. README에 뱃지를 달아보세요.
         </p>
 
-        <SearchForm />
+        {myData ? (
+          <MyTierCard data={myData} />
+        ) : (
+          <LoginButton />
+        )}
       </section>
 
       {/* ── Ranking Table ── */}

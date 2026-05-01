@@ -1,6 +1,6 @@
 {
   "name": "devtier",
-  "version": "0.3.0",
+  "version": "0.4.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,6 +13,7 @@
     "batch:all": "npm run collect:users && npm run collect:scores && npm run recalc:tiers"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.105.1",
     "next": "16.2.4",
     "react": "19.2.4",
