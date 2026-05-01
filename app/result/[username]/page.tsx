@@ -1,6 +1,7 @@
 import { BadgeCopy } from '@/components/BadgeCopy'
 import { ScoreCounter } from '@/components/ScoreCounter'
 import { TierIcon } from '@/components/TierIcon'
+import { getScoreData, type ScoreData } from '@/lib/getScoreData'
 
 const TIER_LABEL: Record<string, string> = {
   challenger: '챌린저',
@@ -20,29 +21,9 @@ const TIER_COLOR: Record<string, string> = {
   bronze:     '#CD7F32',
 }
 
-type ScoreData = {
-  github_id: string
-  score: number
-  tier: string
-  tier_rank: number | null
-  percentile: number | null
-  details: {
-    total_contributions: number
-    current_streak: number
-    longest_streak: number
-    contribution_density: number
-    peak_intensity: number
-  }
-}
-
 async function fetchScore(username: string): Promise<ScoreData | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
   try {
-    const res = await fetch(`${baseUrl}/api/score/${encodeURIComponent(username)}`, {
-      cache: 'no-store',
-    })
-    if (!res.ok) return null
-    return res.json()
+    return await getScoreData(username)
   } catch {
     return null
   }
