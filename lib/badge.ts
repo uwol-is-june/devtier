@@ -28,24 +28,40 @@ export function generateBadgeSvg({ tier, tier_rank, score }: BadgeInput): string
   const rightW = 56 + rightText.length * 5
   const totalW = leftW + midW + rightW
   const h = 20
+  const perimeter = (totalW + h) * 2
 
   const leftCx = leftW / 2
   const midCx = leftW + midW / 2
   const rightCx = leftW + midW + rightW / 2
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${h}">
-  <linearGradient id="s" x2="0" y2="100%">
-    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-    <stop offset="1" stop-opacity=".1"/>
-  </linearGradient>
-  <clipPath id="r">
-    <rect width="${totalW}" height="${h}" rx="3"/>
-  </clipPath>
+  <defs>
+    <linearGradient id="s" x2="0" y2="100%">
+      <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+      <stop offset="1" stop-opacity=".1"/>
+    </linearGradient>
+    <linearGradient id="sh" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="40%" stop-color="#fff" stop-opacity="0.15"/>
+      <stop offset="60%" stop-color="#fff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="r">
+      <rect width="${totalW}" height="${h}" rx="3"/>
+    </clipPath>
+  </defs>
   <g clip-path="url(#r)">
     <rect width="${leftW}" height="${h}" fill="#555"/>
     <rect x="${leftW}" width="${midW}" height="${h}" fill="${meta.color}"/>
     <rect x="${leftW + midW}" width="${rightW}" height="${h}" fill="#444"/>
     <rect width="${totalW}" height="${h}" fill="url(#s)"/>
+    <rect x="${leftW}" width="${midW}" height="${h}" fill="#fff" opacity="0">
+      <animate attributeName="opacity" values="0;0.18;0" dur="2.5s" repeatCount="indefinite"/>
+    </rect>
+    <rect fill="url(#sh)" width="${totalW}" height="${h}">
+      <animateTransform attributeName="transform" type="translate"
+        values="${-totalW},0;${totalW * 2},0" dur="4s" repeatCount="indefinite"/>
+    </rect>
   </g>
   <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
     <text x="${leftCx}" y="15" fill="#010101" fill-opacity=".3">${leftText}</text>
@@ -55,5 +71,11 @@ export function generateBadgeSvg({ tier, tier_rank, score }: BadgeInput): string
     <text x="${rightCx}" y="15" fill="#010101" fill-opacity=".3">${rightText}</text>
     <text x="${rightCx}" y="14">${rightText}</text>
   </g>
+  <rect width="${totalW}" height="${h}" rx="3" fill="none"
+        stroke="${meta.color}" stroke-width="1.5" stroke-opacity=".6"
+        stroke-dasharray="${perimeter}" stroke-dashoffset="${perimeter}">
+    <animate attributeName="stroke-dashoffset" from="${perimeter}" to="0"
+      dur="2s" fill="freeze"/>
+  </rect>
 </svg>`
 }
