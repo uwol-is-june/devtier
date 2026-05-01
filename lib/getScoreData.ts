@@ -9,6 +9,7 @@ export type ScoreData = {
   tier: string
   tier_rank: number | null
   percentile: number | null
+  total_users: number | null
   details: {
     total_contributions: number
     current_streak: number
@@ -36,23 +37,18 @@ export async function getScoreData(username: string): Promise<ScoreData> {
     { onConflict: 'github_id' }
   )
 
-  const { data: row } = await supabase
-    .from('users')
-    .select('percentile, tier, tier_rank')
-    .eq('github_id', username)
-    .single()
-
-  const { count } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-    .gt('score', score)
+  const [{ count }, { count: totalUsers }] = await Promise.all([
+    supabase.from('users').select('*', { count: 'exact', head: true }).gt('score', score),
+    supabase.from('users').select('*', { count: 'exact', head: true }),
+  ])
   const rank = (count ?? 0) + 1
+  const livePercentile = totalUsers ? (rank / totalUsers) * 100 : null
 
-  const tierInfo = getTierInfo(row?.percentile ?? null, rank)
+  const tierInfo = getTierInfo(livePercentile, rank)
 
   await supabase
     .from('users')
-    .update({ tier: tierInfo.tier, tier_rank: tierInfo.tier_rank })
+    .update({ tier: tierInfo.tier, tier_rank: tierInfo.tier_rank, percentile: livePercentile })
     .eq('github_id', username)
 
   return {
@@ -60,7 +56,8 @@ export async function getScoreData(username: string): Promise<ScoreData> {
     score,
     tier: tierInfo.tier,
     tier_rank: tierInfo.tier_rank,
-    percentile: row?.percentile ?? null,
+    percentile: livePercentile,
+    total_users: totalUsers ?? null,
     details: {
       total_contributions: stats.total_contributions,
       current_streak: stats.current_streak,

@@ -127,6 +127,11 @@ export default async function ResultPage({
             }}
           >
             수집된 한국 개발자 상위 {data.percentile.toFixed(1)}%
+            {data.total_users !== null && (
+              <span className="opacity-70 text-xs ml-1">
+                (총 {data.total_users.toLocaleString('ko-KR')}명 기준)
+              </span>
+            )}
           </div>
         )}
       </section>
