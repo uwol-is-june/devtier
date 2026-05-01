@@ -46,6 +46,14 @@
 
 ---
 
+## 인프라 / 도메인
+
+- [ ] 커스텀 도메인 `devtier.dev` Vercel 연결
+  - Vercel 대시보드 → Settings → Domains에서 추가
+  - 연결 후 README 접속 URL 및 뱃지 코드 예시(`devtier.dev/api/badge/...`) 업데이트
+
+---
+
 ## B2B (장기)
 
 > 개발자 데이터가 충분히 쌓인 후 (목표: 수만 명) 고려.

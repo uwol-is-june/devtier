@@ -132,21 +132,9 @@ npm run batch:all
 - `components/ScoreCounter.tsx` — 점수 카운트업 (ease-out cubic)
 
 ### v0.3.0 (2026-04-29)
-- `GET /api/score/[username]` — GitHub GraphQL 조회 → 점수 계산 → DB upsert → tier/rank 산출 → JSON 반환
-- `GET /api/badge/[username]` — tier별 색상 SVG 뱃지 반환, `Cache-Control: public, max-age=3600`
-- `GET /api/ranking` — score 내림차순 상위 100명 + rank 필드 JSON 반환
-- `scripts/collect-users.ts` — GitHub Search API 4종 쿼리, 최대 4,000명 수집
-- `scripts/collect-scores.ts` — 전체 유저 잔디 조회 + 점수 계산, Rate limit 대응
-- `scripts/recalc-tiers.ts` — 백분위·티어 일괄 재산출
-
-### v0.2.0 (2026-04-29)
-- `lib/supabase.ts` — Supabase 서버 클라이언트 (service role)
-- `lib/github.ts` — GitHub GraphQL 잔디 데이터 조회 (streak, density, peak 포함)
-- `lib/score.ts` — 전투력 점수 계산 공식 구현
-- `lib/tier.ts` — 백분위 기준 tier/tier_rank 산출 (챌린저 절대 100명 처리)
-- `lib/badge.ts` — tier별 색상 SVG 뱃지 생성
-
-### v0.1.0 (2026-04-29)
-- Next.js 프로젝트 초기 세팅
-- Supabase 연동 및 `users` 테이블 마이그레이션
-- 서비스 기획 문서화 (`CLAUDE.md`, `docs/TASKS.md`)
+- 유틸 레이어: `lib/supabase.ts`, `lib/github.ts`, `lib/score.ts`, `lib/tier.ts`, `lib/badge.ts`
+- API: `GET /api/score/[username]` — 잔디 조회 → 점수 계산 → DB upsert → tier/rank 반환
+- API: `GET /api/badge/[username]` — tier별 색상 SVG 뱃지, `Cache-Control: public, max-age=3600`
+- API: `GET /api/ranking` — score 내림차순 상위 100명
+- 배치: `collect-users`, `collect-scores`, `recalc-tiers` 스크립트
+- Supabase `users` 테이블 마이그레이션
