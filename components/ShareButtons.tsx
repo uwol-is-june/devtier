@@ -25,7 +25,7 @@ export function ShareButtons({ username, score, tierLabel, percentile, isOwn = f
   const [copied, setCopied] = useState(false)
   const [kakaoReady, setKakaoReady] = useState(false)
 
-  const pageUrl = `https://devtier.dev/result/${username}`
+  const pageUrl = `https://devtier-brown.vercel.app/result/${username}`
   const subject = isOwn ? '나의' : `${username}의`
   const shareText = `${subject} GitHub 개발자 전투력은 ${tierLabel}! 💪 전투력 ${score.toLocaleString('ko-KR')}점${percentile ? ` (한국 개발자 상위 ${percentile.toFixed(1)}%)` : ''} — DevTier에서 내 랭킹 확인해봐`
   const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_APP_KEY
@@ -64,7 +64,7 @@ export function ShareButtons({ username, score, tierLabel, percentile, isOwn = f
       content: {
         title: `${username}의 DevTier — ${tierLabel}`,
         description: shareText,
-        imageUrl: `https://devtier.dev/api/badge/${username}`,
+        imageUrl: `https://devtier-brown.vercel.app/api/badge/${username}`,
         link: { mobileWebUrl: pageUrl, webUrl: pageUrl },
       },
       buttons: [{ title: '내 티어 확인하기', link: { mobileWebUrl: pageUrl, webUrl: pageUrl } }],

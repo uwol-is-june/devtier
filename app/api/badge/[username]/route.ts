@@ -11,7 +11,7 @@ export async function GET(
 
   const { data: row } = await supabase
     .from('users')
-    .select('score, tier, tier_rank')
+    .select('score, tier, tier_rank, percentile')
     .eq('github_id', username)
     .single()
 
@@ -20,6 +20,7 @@ export async function GET(
     tier: row?.tier ?? 'bronze',
     tier_rank: row?.tier_rank ?? 4,
     score: row?.score ?? 0,
+    percentile: row?.percentile ?? null,
   })
 
   return new Response(svg, {

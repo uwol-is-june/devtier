@@ -3,6 +3,7 @@ type BadgeInput = {
   tier: string
   tier_rank: number | null
   score: number
+  percentile: number | null
 }
 
 const TIER_META: Record<string, { label: string; color: string; icon: string; anim: string }> = {
@@ -14,12 +15,30 @@ const TIER_META: Record<string, { label: string; color: string; icon: string; an
   bronze:     { label: '브론즈',  color: '#CD7F32', icon: 'crystal', anim: 'glow-pulse' },
 }
 
-export function generateBadgeSvg({ tier, tier_rank, score }: BadgeInput): string {
+const CSS_ANIMATIONS = `
+  .anim-shimmer { animation: shimmer 2.5s infinite; }
+  .anim-rotate  { animation: badge-rotate 5s linear infinite; transform-origin: 28px 28px; }
+  .anim-sparkle { animation: sparkle 2s infinite; }
+  .anim-glow    { animation: glow 2s ease-in-out infinite; transform-origin: 28px 28px; }
+  .anim-stroke  { animation: stroke-draw 1.5s ease forwards; }
+
+  @keyframes shimmer      { 0% { transform: translateX(-56px); } 60%, 100% { transform: translateX(112px); } }
+  @keyframes badge-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes sparkle      { 0%, 100% { opacity: 0; } 50% { opacity: 0.7; } }
+  @keyframes glow         { 0%, 100% { stroke-opacity: 0.05; transform: scale(0.909); } 50% { stroke-opacity: 0.35; transform: scale(1.091); } }
+  @keyframes stroke-draw  { from { stroke-dashoffset: 468; } to { stroke-dashoffset: 0; } }
+`
+
+export function generateBadgeSvg({ tier, tier_rank, score, percentile }: BadgeInput): string {
   const meta = TIER_META[tier] ?? TIER_META.bronze
   const tierLabel = tier_rank !== null ? `${meta.label} ${tier_rank}` : meta.label
   const scoreLabel = `${score.toLocaleString('ko-KR')}점`
   const { color, icon, anim } = meta
   const t = tier
+
+  const scoreLine = (tier_rank === null || percentile === null)
+    ? `<tspan fill="#e6edf3">${scoreLabel}</tspan>`
+    : `<tspan fill="#e6edf3">${scoreLabel}</tspan><tspan fill="#8b949e"> · 상위 ${percentile.toFixed(1)}%</tspan>`
 
   // Icon SVG (56×56 area, center 28,28)
   let iconBody: string
@@ -50,7 +69,7 @@ export function generateBadgeSvg({ tier, tier_rank, score }: BadgeInput): string
     <circle cx="28" cy="28" r="4" fill="${color}" opacity="0.5"/>`
   }
 
-  // Animation (GitHub removes <animate>/<animateTransform> — static render must still look good)
+  // Animation body (CSS class 방식, SMIL 없음)
   let extraDefs = ''
   let animBody: string
   if (anim === 'shimmer') {
@@ -62,11 +81,7 @@ export function generateBadgeSvg({ tier, tier_rank, score }: BadgeInput): string
       <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
     </linearGradient>`
     animBody = `
-    <rect width="56" height="56" fill="url(#sg-${t})" clip-path="url(#ic-${t})">
-      <animateTransform attributeName="transform" type="translate"
-        values="-56,0;112,0;112,0" keyTimes="0;0.6;1"
-        dur="2.5s" repeatCount="indefinite"/>
-    </rect>`
+    <rect width="56" height="56" fill="url(#sg-${t})" clip-path="url(#ic-${t})" class="anim-shimmer"/>`
   } else if (anim === 'rotate-shimmer') {
     extraDefs = `
     <linearGradient id="rg-${t}" x1="0" x2="1" y1="0" y2="0">
@@ -77,20 +92,12 @@ export function generateBadgeSvg({ tier, tier_rank, score }: BadgeInput): string
     </linearGradient>`
     animBody = `
     <g clip-path="url(#ic-${t})">
-      <rect x="-28" y="0" width="56" height="56" fill="url(#rg-${t})">
-        <animateTransform attributeName="transform" type="rotate"
-          values="0 28 28;360 28 28" dur="5s" repeatCount="indefinite"/>
-      </rect>
+      <rect x="-28" y="0" width="56" height="56" fill="url(#rg-${t})" class="anim-rotate"/>
     </g>
-    <circle cx="40" cy="16" r="2" fill="#fff" opacity="0">
-      <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite"/>
-    </circle>`
+    <circle cx="40" cy="16" r="2" fill="#fff" class="anim-sparkle"/>`
   } else {
     animBody = `
-    <circle cx="28" cy="28" r="22" fill="none" stroke="${color}" stroke-width="1.5">
-      <animate attributeName="stroke-opacity" values="0.05;0.35;0.05" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="r" values="20;24;20" dur="2s" repeatCount="indefinite"/>
-    </circle>`
+    <circle cx="28" cy="28" r="22" fill="none" stroke="${color}" stroke-width="1.5" class="anim-glow"/>`
   }
 
   const perimeter = 468
@@ -104,6 +111,7 @@ export function generateBadgeSvg({ tier, tier_rank, score }: BadgeInput): string
       <rect width="56" height="56"/>
     </clipPath>${extraDefs}
   </defs>
+  <style>${CSS_ANIMATIONS}</style>
   <g clip-path="url(#cc-${t})">
     <rect width="180" height="56" fill="#161b22"/>
     <rect width="56" height="56" fill="#1c2128"/>
@@ -117,13 +125,11 @@ export function generateBadgeSvg({ tier, tier_rank, score }: BadgeInput): string
   <text x="64" y="39"
         font-family="system-ui,-apple-system,'Segoe UI',sans-serif"
         font-size="10">
-    <tspan fill="#8b949e">DevTier · </tspan><tspan fill="#e6edf3">${scoreLabel}</tspan>
+    ${scoreLine}
   </text>
   <rect x="0.75" y="0.75" width="178.5" height="54.5" rx="6"
         fill="none" stroke="${color}" stroke-width="1.5"
-        stroke-dasharray="${perimeter}" stroke-dashoffset="${perimeter}">
-    <animate attributeName="stroke-dashoffset" from="${perimeter}" to="0"
-      dur="1.5s" fill="freeze"/>
-  </rect>
+        stroke-dasharray="${perimeter}" stroke-dashoffset="${perimeter}"
+        class="anim-stroke"/>
 </svg>`
 }

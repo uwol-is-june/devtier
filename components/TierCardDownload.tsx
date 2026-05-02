@@ -8,14 +8,18 @@ export function TierCardDownload({ username }: { username: string }) {
   const handleDownload = async () => {
     setLoading(true)
     try {
-      const html2canvas = (await import('html2canvas')).default
+      const { toPng } = await import('html-to-image')
       const el = document.getElementById('tier-card')
       if (!el) return
-      const canvas = await html2canvas(el, { backgroundColor: null, scale: 2 })
+      const dataUrl = await toPng(el, { backgroundColor: '#0d1117', pixelRatio: 2 })
+      const response = await fetch(dataUrl)
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
+      link.href = url
       link.download = `devtier-${username}.png`
-      link.href = canvas.toDataURL('image/png')
       link.click()
+      URL.revokeObjectURL(url)
     } finally {
       setLoading(false)
     }
