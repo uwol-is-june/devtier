@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 import { generateBadgeSvg } from '@/lib/badge'
 import { supabase } from '@/lib/supabase'
 

@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import type { Metadata } from 'next'
 import { BadgeCopy } from '@/components/BadgeCopy'
 import { ScoreCounter } from '@/components/ScoreCounter'
@@ -5,6 +6,7 @@ import { ShareButtons } from '@/components/ShareButtons'
 import { TierIcon } from '@/components/TierIcon'
 import { getScoreData, type ScoreData } from '@/lib/getScoreData'
 import { TierCardDownload } from '@/components/TierCardDownload'
+import { createClient } from '@/lib/supabase-server'
 
 const TIER_LABEL: Record<string, string> = {
   challenger: '챌린저',
@@ -24,13 +26,13 @@ const TIER_COLOR: Record<string, string> = {
   bronze:     '#CD7F32',
 }
 
-async function fetchScore(username: string): Promise<ScoreData | null> {
+const fetchScore = cache(async (username: string): Promise<ScoreData | null> => {
   try {
     return await getScoreData(username)
   } catch {
     return null
   }
-}
+})
 
 export async function generateMetadata({
   params,
@@ -77,7 +79,12 @@ export default async function ResultPage({
   params: Promise<{ username: string }>
 }) {
   const { username } = await params
-  const data = await fetchScore(username)
+  const [data, client] = await Promise.all([
+    fetchScore(username),
+    createClient(),
+  ])
+  const { data: { user } } = await client.auth.getUser()
+  const loggedInId = user?.user_metadata?.user_name as string | undefined
 
   if (!data) {
     return (
@@ -113,7 +120,7 @@ export default async function ResultPage({
   ]
 
   return (
-    <main className="flex flex-col items-center w-full px-4 pb-24 pt-12">
+    <main className="flex flex-col items-center w-full px-4 pb-24 pt-6 sm:pt-12">
       {/* ── Back ── */}
       <div className="w-full max-w-lg mb-8 animate-fade-in-up">
         <a
@@ -127,7 +134,7 @@ export default async function ResultPage({
       {/* ── Tier Card ── */}
       <section
         id="tier-card"
-        className="w-full max-w-lg rounded-lg p-8 flex flex-col items-center gap-6 mb-8 animate-fade-in-up"
+        className="w-full max-w-lg rounded-lg p-5 sm:p-8 flex flex-col items-center gap-6 mb-8 animate-fade-in-up"
         style={{
           background: 'var(--surface)',
           border: `1px solid ${tierColor}`,
@@ -161,7 +168,7 @@ export default async function ResultPage({
         {/* 전투력 점수 */}
         <div className="text-center">
           <div className="text-xs text-[var(--text-sub)] uppercase tracking-widest mb-1">전투력</div>
-          <div className="text-5xl font-bold font-mono" style={{ color: tierColor }}>
+          <div className="text-4xl sm:text-5xl font-bold font-mono" style={{ color: tierColor }}>
             <ScoreCounter target={data.score} />
           </div>
           <div className="text-sm text-[var(--text-sub)] mt-1">점</div>
@@ -209,11 +216,13 @@ export default async function ResultPage({
         </div>
       </section>
 
-      {/* ── Badge Copy ── */}
-      <section className="w-full max-w-lg mb-8 animate-fade-in-up stagger-6">
-        <h2 className="text-xs text-[var(--text-sub)] uppercase tracking-widest mb-4">뱃지</h2>
-        <BadgeCopy username={data.github_id} />
-      </section>
+      {/* ── Badge Copy (본인 페이지에서만 노출) ── */}
+      {loggedInId === data.github_id && (
+        <section className="w-full max-w-lg mb-8 animate-fade-in-up stagger-6">
+          <h2 className="text-xs text-[var(--text-sub)] uppercase tracking-widest mb-4">뱃지</h2>
+          <BadgeCopy username={data.github_id} />
+        </section>
+      )}
 
       {/* ── Share ── */}
       <section className="w-full max-w-lg animate-fade-in-up stagger-6">

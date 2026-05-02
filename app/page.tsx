@@ -130,7 +130,7 @@ export default async function Home() {
           GitHub 잔디 기반 개발자 전투력 측정
         </div>
 
-        <h1 className="text-5xl font-bold tracking-tight leading-tight">
+        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
           <span
             className="animate-gradient-shift"
             style={{
@@ -177,7 +177,8 @@ export default async function Home() {
             className="rounded-md border border-[var(--border)] overflow-hidden"
             style={{ background: 'var(--surface)' }}
           >
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[480px]">
               <thead>
                 <tr
                   className="text-left text-xs text-[var(--text-sub)] uppercase tracking-wider"
@@ -320,6 +321,7 @@ export default async function Home() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </section>
