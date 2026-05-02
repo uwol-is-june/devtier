@@ -1,6 +1,6 @@
 {
   "name": "devtier",
-  "version": "0.4.4",
+  "version": "0.4.10",
   "private": true,
   "scripts": {
     "dev": "next dev",
