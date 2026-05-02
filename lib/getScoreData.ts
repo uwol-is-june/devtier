@@ -23,20 +23,6 @@ export async function getScoreData(username: string): Promise<ScoreData> {
   const stats = await fetchContributions(username)
   const score = calcScore(stats)
 
-  await supabase.from('users').upsert(
-    {
-      github_id: username,
-      score,
-      total_contributions: stats.total_contributions,
-      current_streak: stats.current_streak,
-      longest_streak: stats.longest_streak,
-      contribution_density: stats.contribution_density,
-      peak_intensity: stats.peak_intensity,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: 'github_id' }
-  )
-
   const [{ count }, { count: totalUsers }] = await Promise.all([
     supabase.from('users').select('*', { count: 'exact', head: true }).gt('score', score),
     supabase.from('users').select('*', { count: 'exact', head: true }),
@@ -46,10 +32,22 @@ export async function getScoreData(username: string): Promise<ScoreData> {
 
   const tierInfo = getTierInfo(livePercentile, rank)
 
-  await supabase
-    .from('users')
-    .update({ tier: tierInfo.tier, tier_rank: tierInfo.tier_rank, percentile: livePercentile })
-    .eq('github_id', username)
+  await supabase.from('users').upsert(
+    {
+      github_id: username,
+      score,
+      total_contributions: stats.total_contributions,
+      current_streak: stats.current_streak,
+      longest_streak: stats.longest_streak,
+      contribution_density: stats.contribution_density,
+      peak_intensity: stats.peak_intensity,
+      tier: tierInfo.tier,
+      tier_rank: tierInfo.tier_rank,
+      percentile: livePercentile,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'github_id' }
+  )
 
   return {
     github_id: username,
