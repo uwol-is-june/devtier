@@ -6,6 +6,7 @@ import { ShareButtons } from '@/components/ShareButtons'
 import { TierIcon } from '@/components/TierIcon'
 import { getScoreData, type ScoreData } from '@/lib/getScoreData'
 import { TierCardDownload } from '@/components/TierCardDownload'
+import { StatTooltip } from '@/components/StatTooltip'
 import { createClient } from '@/lib/supabase-server'
 
 const TIER_LABEL: Record<string, string> = {
@@ -112,11 +113,11 @@ export default async function ResultPage({
   const isChallenger = data.tier === 'challenger'
 
   const stats = [
-    { label: '총 잔디 수',     value: `${data.details.total_contributions.toLocaleString('ko-KR')} 개` },
-    { label: '현재 스트릭',   value: `${data.details.current_streak} 일` },
-    { label: '최대 스트릭',   value: `${data.details.longest_streak} 일` },
-    { label: '잔디 밀도',     value: `${(data.details.contribution_density * 100).toFixed(1)}%` },
-    { label: '피크 강도',     value: `${data.details.peak_intensity} 개/일` },
+    { label: '총 잔디 수',   value: `${data.details.total_contributions.toLocaleString('ko-KR')} 개`, tip: '최근 1년간 GitHub에 기록된 총 contribution 수' },
+    { label: '현재 스트릭', value: `${data.details.current_streak} 일`,                               tip: '오늘 기준 연속으로 커밋한 일수' },
+    { label: '최대 스트릭', value: `${data.details.longest_streak} 일`,                               tip: '역대 가장 길게 이어진 연속 커밋 기록' },
+    { label: '잔디 밀도',   value: `${(data.details.contribution_density * 100).toFixed(1)}%`,        tip: '최근 365일 중 커밋이 있는 날의 비율' },
+    { label: '피크 강도',   value: `${data.details.peak_intensity} 개/일`,                            tip: '하루에 가장 많이 커밋한 수' },
   ]
 
   return (
@@ -209,7 +210,10 @@ export default async function ResultPage({
               className={`rounded-md p-4 flex flex-col gap-1 animate-fade-in-up stagger-${i + 1}`}
               style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
             >
-              <div className="text-xs text-[var(--text-sub)]">{stat.label}</div>
+              <div className="flex items-center gap-1 text-xs text-[var(--text-sub)]">
+                {stat.label}
+                <StatTooltip text={stat.tip} />
+              </div>
               <div className="text-lg font-semibold font-mono text-[var(--text)]">{stat.value}</div>
             </div>
           ))}
