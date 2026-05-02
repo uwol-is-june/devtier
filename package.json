@@ -10,7 +10,8 @@
     "collect:users": "tsx --env-file=.env.local scripts/collect-users.ts",
     "collect:scores": "tsx --env-file=.env.local scripts/collect-scores.ts",
     "recalc:tiers": "tsx --env-file=.env.local scripts/recalc-tiers.ts",
-    "batch:all": "npm run collect:users && npm run collect:scores && npm run recalc:tiers"
+    "batch:all": "npm run collect:users && npm run collect:scores && npm run recalc:tiers",
+    "release": "release-it"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.2",
@@ -21,6 +22,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "^11.0.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
@@ -29,6 +31,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "pg": "^8.20.0",
+    "release-it": "^20.0.1",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5"
