@@ -21,12 +21,13 @@ declare global {
   }
 }
 
-export function ShareButtons({ username, score, tierLabel, percentile }: ShareButtonsProps) {
+export function ShareButtons({ username, score, tierLabel, percentile, isOwn = false }: ShareButtonsProps & { isOwn?: boolean }) {
   const [copied, setCopied] = useState(false)
   const [kakaoReady, setKakaoReady] = useState(false)
 
   const pageUrl = `https://devtier.dev/result/${username}`
-  const shareText = `나의 GitHub 개발자 전투력은 ${tierLabel}! 💪 전투력 ${score.toLocaleString('ko-KR')}점${percentile ? ` (한국 개발자 상위 ${percentile.toFixed(1)}%)` : ''} — DevTier에서 내 랭킹 확인해봐`
+  const subject = isOwn ? '나의' : `${username}의`
+  const shareText = `${subject} GitHub 개발자 전투력은 ${tierLabel}! 💪 전투력 ${score.toLocaleString('ko-KR')}점${percentile ? ` (한국 개발자 상위 ${percentile.toFixed(1)}%)` : ''} — DevTier에서 내 랭킹 확인해봐`
   const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_APP_KEY
 
   useEffect(() => {

@@ -231,6 +231,7 @@ export default async function ResultPage({
           score={data.score}
           tierLabel={fullTierLabel}
           percentile={data.percentile}
+          isOwn={loggedInId === data.github_id}
         />
       </section>
     </main>
