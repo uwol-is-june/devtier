@@ -118,6 +118,7 @@ export default async function ResultPage({
     { label: '최대 스트릭', value: `${data.details.longest_streak} 일`,                               tip: '역대 가장 길게 이어진 연속 커밋 기록' },
     { label: '잔디 밀도',   value: `${(data.details.contribution_density * 100).toFixed(1)}%`,        tip: '최근 365일 중 커밋이 있는 날의 비율' },
     { label: '피크 강도',   value: `${data.details.peak_intensity} 개/일`,                            tip: '하루에 가장 많이 커밋한 수' },
+    { label: '레포 스타',   value: `${data.details.total_stars.toLocaleString('ko-KR')} 개`,           tip: '본인 소유 레포지토리의 스타 합산 수' },
   ]
 
   return (
