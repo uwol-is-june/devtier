@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="d-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#58a6ff"/>
+      <stop offset="100%" stop-color="#bc8cff"/>
+    </linearGradient>
+  </defs>
+  <!-- Background: 실제 페이지 bg 색상 -->
+  <rect width="32" height="32" rx="6" fill="#0d1117"/>
+  <!-- Border: 디자인 시스템 border 토큰 -->
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="5.5"
+        fill="none" stroke="#30363d" stroke-width="1"/>
+  <!-- D shape: stem -->
+  <rect x="8" y="8" width="3.5" height="16" fill="url(#d-grad)"/>
+  <!-- D shape: curved body -->
+  <path d="M10 8 Q22 8 22 16 Q22 24 10 24 Z" fill="url(#d-grad)"/>
+  <path d="M12.5 10.5 Q19 10.5 19 16 Q19 21.5 12.5 21.5 Z" fill="#0d1117"/>
+  <!-- Tier dot accent -->
+  <circle cx="24" cy="9" r="2.5" fill="#FF4655" fill-opacity="0.9"/>
+</svg>
