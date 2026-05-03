@@ -16,6 +16,7 @@ export type ScoreData = {
     longest_streak: number
     contribution_density: number
     peak_intensity: number
+    total_stars: number
   }
 }
 
@@ -41,6 +42,7 @@ export async function getScoreData(username: string): Promise<ScoreData> {
       longest_streak: stats.longest_streak,
       contribution_density: stats.contribution_density,
       peak_intensity: stats.peak_intensity,
+      total_stars: stats.total_stars,
       tier: tierInfo.tier,
       tier_rank: tierInfo.tier_rank,
       percentile: livePercentile,
@@ -62,6 +64,7 @@ export async function getScoreData(username: string): Promise<ScoreData> {
       longest_streak: stats.longest_streak,
       contribution_density: stats.contribution_density,
       peak_intensity: stats.peak_intensity,
+      total_stars: stats.total_stars,
     },
   }
 }
