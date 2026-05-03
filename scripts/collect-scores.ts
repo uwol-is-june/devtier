@@ -33,6 +33,7 @@ async function main() {
   console.log(`총 ${users.length}명 점수 계산 시작`)
 
   const failed: string[] = []
+  const retryQueue: typeof users = []
   let processed = 0
 
   for (const user of users) {
@@ -57,20 +58,52 @@ async function main() {
 
       processed++
       if (processed % 100 === 0) {
-        console.log(`${processed}/${users.length} 완료 (실패: ${failed.length})`)
+        console.log(`${processed}/${users.length} 완료 (실패: ${failed.length}, 재시도 대기: ${retryQueue.length})`)
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
       if (msg.toLowerCase().includes('rate limit')) {
-        console.warn(`  Rate limit 감지 → ${RATE_LIMIT_DELAY_MS / 1000}초 대기 후 재시도`)
-        await delay(RATE_LIMIT_DELAY_MS)
-        // 재시도 없이 스킵 (다음 실행에서 처리)
+        retryQueue.push(user)
+        console.warn(`  [RATE LIMIT] ${user.github_id} → 재시도 큐 (${retryQueue.length}명)`)
+      } else {
+        console.warn(`[SKIP] ${user.github_id}: ${msg}`)
+        failed.push(user.github_id)
       }
-      console.warn(`[SKIP] ${user.github_id}: ${msg}`)
-      failed.push(user.github_id)
     }
 
     await delay(GITHUB_DELAY_MS)
+  }
+
+  if (retryQueue.length > 0) {
+    console.log(`\n재시도 큐 ${retryQueue.length}명 — ${RATE_LIMIT_DELAY_MS / 1000}초 대기 중...`)
+    await delay(RATE_LIMIT_DELAY_MS)
+    for (const user of retryQueue) {
+      try {
+        const stats = await fetchContributions(user.github_id)
+        const score = calcScore(stats)
+        const { error } = await supabase.from('users').upsert(
+          {
+            github_id: user.github_id,
+            score,
+            total_contributions: stats.total_contributions,
+            current_streak: stats.current_streak,
+            longest_streak: stats.longest_streak,
+            contribution_density: stats.contribution_density,
+            peak_intensity: stats.peak_intensity,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'github_id' },
+        )
+        if (error) throw new Error(error.message)
+        processed++
+        console.log(`  [재시도 성공] ${user.github_id}`)
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err)
+        console.warn(`[재시도 실패] ${user.github_id}: ${msg}`)
+        failed.push(user.github_id)
+      }
+      await delay(GITHUB_DELAY_MS)
+    }
   }
 
   console.log(`\n완료: ${processed}명 성공, ${failed.length}명 실패`)

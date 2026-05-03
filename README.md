@@ -93,8 +93,14 @@ GitHub 최근 1년 잔디 데이터를 기반으로 아래 공식으로 계산�
 | v0.4.10 | 푸터 버전 표기 추가, 뱃지 캐시 no-cache로 변경 | ✅ 완료 |
 | v0.4.11 | release-it 자동 버전 관리 설정 | ✅ 완료 |
 | v0.4.12 | 뱃지 SMIL → CSS 애니메이션 전환 (GitHub 호환), 뱃지 백분위 표시 추가 | ✅ 완료 |
+| v0.4.13 | GitHub Actions 배치 자동화, rate limit 재시도 큐 개선 | ✅ 완료 |
 
 ## Changelog
+
+### v0.4.13 (2026-05-03)
+
+- feat: GitHub Actions 주간 배치 자동화 (매주 월요일 KST 03:00, `workflow_dispatch` 수동 실행 지원)
+- fix: `collect:scores` rate limit 발생 시 스킵 대신 재시도 큐로 처리
 
 ### v0.4.12 (2026-05-02)
 
