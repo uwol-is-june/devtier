@@ -29,6 +29,7 @@ async function fetchAllUsers(): Promise<{ id: number; github_id: string }[]> {
 }
 
 async function main() {
+  const startTime = Date.now()
   const users = await fetchAllUsers()
   console.log(`총 ${users.length}명 점수 계산 시작`)
 
@@ -110,6 +111,16 @@ async function main() {
   if (failed.length > 0) {
     console.log('실패 목록:', failed.join(', '))
   }
+
+  const duration = Math.round((Date.now() - startTime) / 1000)
+  const { error: logError } = await supabase.from('batch_logs').insert({
+    total: users.length,
+    updated: processed,
+    skipped: failed.length,
+    duration_sec: duration,
+  })
+  if (logError) console.warn('batch_logs 기록 실패:', logError.message)
+  else console.log(`배치 로그 기록 완료 (소요: ${duration}초)`)
 }
 
 main().catch((err) => {

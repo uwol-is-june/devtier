@@ -22,16 +22,18 @@ export function BadgeCopy({ username }: { username: string }) {
       <p className="text-sm text-[var(--text-sub)]">뱃지 코드 — GitHub README에 붙여넣기</p>
       <div
         className="
-          flex items-center gap-2 px-4 py-3 rounded-md
+          px-4 py-3 rounded-md
           bg-[var(--surface)] border border-[var(--border)]
           font-mono text-xs text-[var(--text)] overflow-x-auto
         "
       >
-        <span className="flex-1 whitespace-nowrap">{markdown}</span>
+        <span className="whitespace-nowrap">{markdown}</span>
+      </div>
+      <div className="flex justify-end">
         <button
           onClick={handleCopy}
           className="
-            shrink-0 px-3 py-1.5 rounded text-xs font-medium
+            px-3 py-1.5 rounded text-xs font-medium
             border transition-all duration-200 cursor-pointer
             active:scale-95
             "
