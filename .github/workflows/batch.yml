@@ -41,3 +41,25 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: 완료 알림 이메일
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.naver.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[DevTier] 주간 배치 ${{ job.status == 'success' && '완료 ✅' || '실패 ❌' }}"
+          to: std06158@naver.com
+          from: ${{ secrets.MAIL_USERNAME }}
+          body: |
+            DevTier 주간 배치 실행 결과
+
+            상태: ${{ job.status }}
+            실행 시각: ${{ github.event.head_commit.timestamp || github.run_attempt }}
+            실행 번호: #${{ github.run_number }}
+
+            상세 로그:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
