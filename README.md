@@ -14,7 +14,7 @@ GitHub 잔디(contribution) 데이터로 한국 개발자 전투력을 측정하
 3. 결과 페이지에서 뱃지 코드를 복사해 GitHub 프로필 README에 붙여넣는다.
 
 ```html
-<a href="https://devtier.dev/result/깃헙아이디"><img src="https://devtier-brown.vercel.app/api/badge/깃헙아이디" width="240" /></a>
+<a href="https://devtier-brown.vercel.app/result/깃헙아이디"><img src="https://devtier-brown.vercel.app/api/badge/깃헙아이디" width="240" /></a>
 ```
 
 점수가 바뀌면 뱃지도 자동으로 업데이트된다.
