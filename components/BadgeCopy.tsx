@@ -5,7 +5,8 @@ import { useState } from 'react'
 export function BadgeCopy({ username }: { username: string }) {
   const [copied, setCopied] = useState(false)
   const badgeUrl = `https://devtier-brown.vercel.app/api/badge/${username}`
-  const markdown = `![DevTier](${badgeUrl})`
+  const resultUrl = `https://devtier.dev/result/${username}`
+  const markdown = `[![DevTier](${badgeUrl})](${resultUrl})`
 
   async function handleCopy() {
     try {

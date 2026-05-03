@@ -13,8 +13,8 @@ GitHub 잔디(contribution) 데이터로 한국 개발자 전투력을 측정하
 2. 잔디 데이터를 분석해 전투력 점수와 티어를 계산한다.
 3. 결과 페이지에서 뱃지 코드를 복사해 GitHub 프로필 README에 붙여넣는다.
 
-```markdown
-![DevTier](https://devtier-brown.vercel.app/api/badge/깃헙아이디)
+```html
+<a href="https://devtier.dev/result/깃헙아이디"><img src="https://devtier-brown.vercel.app/api/badge/깃헙아이디" width="240" /></a>
 ```
 
 점수가 바뀌면 뱃지도 자동으로 업데이트된다.
@@ -94,8 +94,15 @@ GitHub 최근 1년 잔디 데이터를 기반으로 아래 공식으로 계산�
 | v0.4.11 | release-it 자동 버전 관리 설정 | ✅ 완료 |
 | v0.4.12 | 뱃지 SMIL → CSS 애니메이션 전환 (GitHub 호환), 뱃지 백분위 표시 추가 | ✅ 완료 |
 | v0.4.13 | GitHub Actions 배치 자동화, rate limit 재시도 큐 개선 | ✅ 완료 |
+| v0.4.14 | DevTier 브랜드 파비콘, /about 서비스 소개 페이지 추가 | ✅ 완료 |
+| v0.4.15 | README 뱃지 사이즈 개선, 뱃지 클릭 시 결과 페이지 이동 | ✅ 완료 |
 
 ## Changelog
+
+### v0.4.15 (2026-05-03)
+
+- feat: README.md 뱃지 코드 예시를 `<img width="240">` + `<a>` 링크 형태로 교체
+- feat: BadgeCopy 복사 텍스트에 결과 페이지 링크 추가 (`[![DevTier](…)](https://devtier.dev/result/ID)`)
 
 ### v0.4.14 (2026-05-03)
 
