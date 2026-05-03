@@ -4,6 +4,7 @@ export type ContributionStats = {
   longest_streak: number
   contribution_density: number
   peak_intensity: number
+  total_stars: number
 }
 
 const GITHUB_GRAPHQL = 'https://api.github.com/graphql'
@@ -20,6 +21,11 @@ const QUERY = `
               date
             }
           }
+        }
+      }
+      repositories(first: 100, ownerAffiliations: [OWNER]) {
+        nodes {
+          stargazerCount
         }
       }
     }
@@ -86,5 +92,8 @@ export async function fetchContributions(username: string): Promise<Contribution
     }
   }
 
-  return { total_contributions, current_streak, longest_streak, contribution_density, peak_intensity }
+  const repos: { stargazerCount: number }[] = json.data.user.repositories?.nodes ?? []
+  const total_stars = repos.reduce((sum, r) => sum + (r.stargazerCount ?? 0), 0)
+
+  return { total_contributions, current_streak, longest_streak, contribution_density, peak_intensity, total_stars }
 }
