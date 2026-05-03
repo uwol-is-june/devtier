@@ -1,0 +1,21 @@
+name: Test Email
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 이메일 연결 테스트
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.naver.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[DevTier] 이메일 연결 테스트"
+          to: std06158@naver.com
+          from: ${{ secrets.MAIL_USERNAME }}
+          body: "GitHub Actions 이메일 연결 성공입니다."
