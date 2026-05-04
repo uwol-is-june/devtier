@@ -99,8 +99,19 @@ GitHub 최근 1년 잔디 데이터를 기반으로 아래 공식으로 계산�
 | v0.4.14 | DevTier 브랜드 파비콘, /about 서비스 소개 페이지 추가 | ✅ 완료 |
 | v0.4.15 | README 뱃지 사이즈 개선, 뱃지 클릭 시 결과 페이지 이동 | ✅ 완료 |
 | v0.4.16 | 전투력 공식에 레포 스타 수 반영 (log2 스케일) | ✅ 완료 |
+| v0.4.17 | 도전과제 시스템 — 30개 업적, 결과 페이지 그리드 UI | ✅ 완료 |
 
 ## Changelog
+
+### v0.4.17 (2026-05-04)
+
+- feat: 도전과제(Achievement) 시스템 추가 — 잔디·티어·패턴·소셜 카테고리 30개 업적
+- feat: `achievements` + `user_achievements` DB 테이블, `users.created_at` 컬럼
+- feat: `/api/achievements/[username]` — 개인 달성 현황 + 진행률 API
+- feat: `/api/achievements/stats` — 전체 유저 보유 비율 집계 API
+- feat: 결과 페이지에 AchievementGrid 컴포넌트 추가 (카테고리 탭, 희귀도 glow, 진행률 바, 보유율 툴팁)
+- feat: `badge_live` — GitHub Camo UA 감지 시 `after()`로 뱃지 달기 업적 자동 부여
+- feat: `first_scan` — 최초 스캔 시 업적 자동 부여, `early_adopter` — 오픈 30일 이내 등록 업적
 
 ### v0.4.16 (2026-05-03)
 

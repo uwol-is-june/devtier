@@ -7,6 +7,7 @@ import { TierIcon } from '@/components/TierIcon'
 import { getScoreData, type ScoreData } from '@/lib/getScoreData'
 import { TierCardDownload } from '@/components/TierCardDownload'
 import { StatTooltip } from '@/components/StatTooltip'
+import { AchievementGrid } from '@/components/AchievementGrid'
 import { createClient } from '@/lib/supabase-server'
 
 const TIER_LABEL: Record<string, string> = {
@@ -220,6 +221,9 @@ export default async function ResultPage({
           ))}
         </div>
       </section>
+
+      {/* ── Achievements ── */}
+      <AchievementGrid username={data.github_id} />
 
       {/* ── Badge Copy (본인 페이지에서만 노출) ── */}
       {loggedInId === data.github_id && (

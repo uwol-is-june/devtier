@@ -1,13 +1,13 @@
-export const runtime = 'edge'
-
+import { after } from 'next/server'
 import { generateBadgeSvg } from '@/lib/badge'
 import { supabase } from '@/lib/supabase'
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ username: string }> }
 ) {
   const { username } = await params
+  const isCamo = req.headers.get('user-agent')?.toLowerCase().includes('github-camo') ?? false
 
   const { data: row } = await supabase
     .from('users')
@@ -22,6 +22,15 @@ export async function GET(
     score: row?.score ?? 0,
     percentile: row?.percentile ?? null,
   })
+
+  if (isCamo && row !== null) {
+    after(async () => {
+      await supabase.from('user_achievements').upsert(
+        { github_id: username, achievement_id: 'badge_live', unlocked_at: new Date().toISOString() },
+        { onConflict: 'github_id,achievement_id', ignoreDuplicates: true }
+      )
+    })
+  }
 
   return new Response(svg, {
     headers: {
