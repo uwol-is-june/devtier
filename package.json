@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "collect:users": "tsx --env-file=.env.local scripts/collect-users.ts",
-    "collect:scores": "tsx --env-file=.env.local scripts/collect-scores.ts",
-    "recalc:tiers": "tsx --env-file=.env.local scripts/recalc-tiers.ts",
+    "collect:users": "if [ -f .env.local ]; then tsx --env-file=.env.local scripts/collect-users.ts; else tsx scripts/collect-users.ts; fi",
+    "collect:scores": "if [ -f .env.local ]; then tsx --env-file=.env.local scripts/collect-scores.ts; else tsx scripts/collect-scores.ts; fi",
+    "recalc:tiers": "if [ -f .env.local ]; then tsx --env-file=.env.local scripts/recalc-tiers.ts; else tsx scripts/recalc-tiers.ts; fi",
     "batch:all": "npm run collect:users && npm run collect:scores && npm run recalc:tiers",
     "release": "release-it"
   },
