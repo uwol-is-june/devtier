@@ -19,6 +19,11 @@ type BatchLog = {
   duration_sec: number
 }
 
+type RegisteredUser = {
+  github_id: string
+  created_at: string
+}
+
 async function fetchAdminData() {
   const [
     { count: totalUsers },
@@ -26,6 +31,7 @@ async function fetchAdminData() {
     { count: nullScoreCount },
     { count: staleCount },
     { data: batchLogs },
+    { data: authData },
   ] = await Promise.all([
     supabase.from('users').select('*', { count: 'exact', head: true }),
     supabase.from('users').select('tier').not('tier', 'is', null),
@@ -39,6 +45,7 @@ async function fetchAdminData() {
       .select('*')
       .order('run_at', { ascending: false })
       .limit(10),
+    supabase.auth.admin.listUsers({ perPage: 1000 }),
   ])
 
   const tierCounts: Record<string, number> = {}
@@ -46,12 +53,18 @@ async function fetchAdminData() {
     tierCounts[row.tier] = (tierCounts[row.tier] ?? 0) + 1
   }
 
+  const registeredUsers: RegisteredUser[] = (authData?.users ?? [])
+    .filter((u) => u.user_metadata?.user_name)
+    .map((u) => ({ github_id: u.user_metadata.user_name as string, created_at: u.created_at }))
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
   return {
     totalUsers: totalUsers ?? 0,
     tierCounts,
     nullScoreCount: nullScoreCount ?? 0,
     staleCount: staleCount ?? 0,
     batchLogs: (batchLogs ?? []) as BatchLog[],
+    registeredUsers,
   }
 }
 
@@ -81,7 +94,9 @@ export default async function AdminPage({
     )
   }
 
-  const { totalUsers, tierCounts, nullScoreCount, staleCount, batchLogs } = await fetchAdminData()
+  const { totalUsers, tierCounts, nullScoreCount, staleCount, batchLogs, registeredUsers } = await fetchAdminData()
+  const registeredCount = registeredUsers.length
+  const batchOnlyCount = totalUsers - registeredCount
 
   return (
     <main style={{
@@ -105,6 +120,37 @@ export default async function AdminPage({
           <StatCard label="score NULL" value={nullScoreCount.toLocaleString()} warn={nullScoreCount > 0} />
           <StatCard label="2주 이상 미갱신" value={staleCount.toLocaleString()} warn={staleCount > 0} />
         </div>
+      </section>
+
+      {/* 가입 현황 */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1rem', color: '#8b949e', marginBottom: '1rem' }}>가입 현황</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+          <StatCard label="배치 수집" value={batchOnlyCount.toLocaleString()} />
+          <StatCard label="실제 가입 (OAuth)" value={registeredCount.toLocaleString()} />
+        </div>
+        {registeredUsers.length === 0 ? (
+          <p style={{ color: '#8b949e', fontSize: '0.875rem' }}>가입 유저 없음</p>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid #30363d', color: '#8b949e' }}>
+                <th style={{ textAlign: 'left', padding: '0.5rem 0', width: '2.5rem' }}>#</th>
+                <th style={{ textAlign: 'left', padding: '0.5rem 0' }}>GitHub ID</th>
+                <th style={{ textAlign: 'right', padding: '0.5rem 0' }}>가입 시각</th>
+              </tr>
+            </thead>
+            <tbody>
+              {registeredUsers.map((u, i) => (
+                <tr key={u.github_id} style={{ borderBottom: '1px solid #21262d' }}>
+                  <td style={{ padding: '0.5rem 0', color: '#8b949e' }}>{i + 1}</td>
+                  <td style={{ padding: '0.5rem 0' }}>{u.github_id}</td>
+                  <td style={{ textAlign: 'right', padding: '0.5rem 0', color: '#8b949e' }}>{formatDate(u.created_at)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </section>
 
       {/* 티어 분포 */}
