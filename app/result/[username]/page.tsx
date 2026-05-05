@@ -6,8 +6,7 @@ import { ShareButtons } from '@/components/ShareButtons'
 import { TierIcon } from '@/components/TierIcon'
 import { getScoreData, type ScoreData } from '@/lib/getScoreData'
 import { TierCardDownload } from '@/components/TierCardDownload'
-import { StatTooltip } from '@/components/StatTooltip'
-import { AchievementGrid } from '@/components/AchievementGrid'
+import { StatsTabs } from '@/components/StatsTabs'
 import { createClient } from '@/lib/supabase-server'
 
 const TIER_LABEL: Record<string, string> = {
@@ -202,28 +201,8 @@ export default async function ResultPage({
         <TierCardDownload username={data.github_id} />
       </div>
 
-      {/* ── Stats Grid ── */}
-      <section className="w-full max-w-lg mb-8">
-        <h2 className="text-xs text-[var(--text-sub)] uppercase tracking-widest mb-4">세부 지표</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {stats.map((stat, i) => (
-            <div
-              key={stat.label}
-              className={`rounded-md p-4 flex flex-col gap-1 animate-fade-in-up stagger-${i + 1}`}
-              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-            >
-              <div className="flex items-center gap-1 text-xs text-[var(--text-sub)]">
-                {stat.label}
-                <StatTooltip text={stat.tip} />
-              </div>
-              <div className="text-lg font-semibold font-mono text-[var(--text)]">{stat.value}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Achievements ── */}
-      <AchievementGrid username={data.github_id} />
+      {/* ── Stats & Achievements Tabs ── */}
+      <StatsTabs stats={stats} username={data.github_id} />
 
       {/* ── Badge Copy (본인 페이지에서만 노출) ── */}
       {loggedInId === data.github_id && (
