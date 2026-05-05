@@ -40,8 +40,8 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/?error=auth`)
   }
 
-  // 점수 즉시 수집 (실패해도 결과 페이지에서 재시도)
-  await fetch(`${origin}/api/score/${encodeURIComponent(username)}`, {
+  // 점수 수집은 백그라운드에서 fire-and-forget (결과 페이지에서 처리)
+  fetch(`${origin}/api/score/${encodeURIComponent(username)}`, {
     cache: 'no-store',
   }).catch(() => {})
 
