@@ -9,6 +9,12 @@ export async function GET(
   const { username } = await params
   const isCamo = req.headers.get('user-agent')?.toLowerCase().includes('github-camo') ?? false
 
+  const { searchParams } = new URL(req.url)
+  const rawTheme = searchParams.get('theme')
+  const rawSize  = searchParams.get('size')
+  const theme = rawTheme === 'light' ? 'light' : 'dark'
+  const size  = rawSize === 'sm' ? 'sm' : rawSize === 'lg' ? 'lg' : 'md'
+
   const { data: row } = await supabase
     .from('users')
     .select('score, tier, tier_rank, percentile')
@@ -21,6 +27,8 @@ export async function GET(
     tier_rank: row?.tier_rank ?? 4,
     score: row?.score ?? 0,
     percentile: row?.percentile ?? null,
+    theme,
+    size,
   })
 
   if (isCamo && row !== null) {
