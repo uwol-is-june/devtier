@@ -17,11 +17,12 @@ const TIER_DATA = [
 ]
 
 const SCORE_FACTORS = [
-  { formula: '총 잔디 수',    weight: '× 1',   note: '최근 1년 GitHub contribution 총 개수' },
-  { formula: '현재 스트릭',   weight: '× 3',   note: '오늘 기준 연속 커밋 일수 (가장 큰 비중)' },
-  { formula: '최대 스트릭',   weight: '× 2',   note: '역대 최장 연속 커밋 기록' },
-  { formula: '잔디 밀도 (%)', weight: '× 100', note: '365일 중 커밋이 있는 날의 비율 (0~100)' },
-  { formula: '피크 강도',     weight: '× 0.5', note: '하루 최대 커밋 수' },
+  { formula: '총 잔디 수',    weight: '× 1',             note: '최근 1년 GitHub contribution 총 개수' },
+  { formula: '현재 스트릭',   weight: '× 3',             note: '오늘 기준 연속 커밋 일수 (가장 큰 비중)' },
+  { formula: '최대 스트릭',   weight: '× 2',             note: '역대 최장 연속 커밋 기록' },
+  { formula: '잔디 밀도 (%)', weight: '× 100',           note: '365일 중 커밋이 있는 날의 비율 (0~100)' },
+  { formula: '피크 강도',     weight: '× 0.5',           note: '하루 최대 커밋 수' },
+  { formula: '레포 스타 수',  weight: 'log₂(n+1) × 10', note: '본인 소유 레포지토리 스타 합산 (로그 스케일, 100스타≈66점)' },
 ]
 
 export default function AboutPage() {
@@ -146,7 +147,9 @@ export default function AboutPage() {
           <span style={{ color: '#5AC9A6' }}>잔디밀도(%)</span>
           <span style={{ color: 'var(--text-sub)' }}> × 100  +  </span>
           <span style={{ color: '#FFD700' }}>피크강도</span>
-          <span style={{ color: 'var(--text-sub)' }}> × 0.5</span>
+          <span style={{ color: 'var(--text-sub)' }}> × 0.5  +  </span>
+          <span style={{ color: '#bc8cff' }}>log₂(레포스타+1)</span>
+          <span style={{ color: 'var(--text-sub)' }}> × 10</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {SCORE_FACTORS.map((f) => (
@@ -184,7 +187,7 @@ export default function AboutPage() {
             className="rounded px-4 py-3 font-mono text-xs overflow-x-auto"
             style={{ background: '#0d1117', border: '1px solid var(--border)', color: 'var(--text)' }}
           >
-            {'![DevTier](https://devtier.dev/api/badge/깃헙아이디)'}
+            {'[![DevTier](https://devtier-brown.vercel.app/api/badge/깃헙아이디)](https://devtier-brown.vercel.app/result/깃헙아이디)'}
           </div>
           <p className="text-xs mt-3" style={{ color: 'var(--text-sub)' }}>
             <code
@@ -198,6 +201,11 @@ export default function AboutPage() {
             </code>
             {' '}부분을 본인의 GitHub 아이디로 교체하세요.
             뱃지는 실시간으로 최신 티어 정보를 반영합니다.
+          </p>
+          <p className="text-xs mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>
+            결과 페이지에서 <strong style={{ color: 'var(--text)' }}>테마(다크/라이트)</strong>,{' '}
+            <strong style={{ color: 'var(--text)' }}>크기(작게/보통/크게)</strong>,{' '}
+            <strong style={{ color: 'var(--text)' }}>정렬</strong>을 선택하면 맞춤형 뱃지 코드를 바로 복사할 수 있습니다.
           </p>
           <p className="text-xs mt-2" style={{ color: 'var(--text-sub)' }}>
             * GitHub location을 한국(South Korea)으로 설정한 유저 기준 백분위입니다.
