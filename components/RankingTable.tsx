@@ -247,7 +247,7 @@ export function RankingTable({ initialRows, myData, total }: Props) {
             ) : expanded ? (
               '접기 ↑'
             ) : (
-              `펼쳐보기 (총 ${total.toLocaleString('ko-KR')}명) ↓`
+              '펼쳐보기'
             )}
           </button>
         </div>
