@@ -23,10 +23,8 @@ export default function RootLayout({
     <html lang="ko" className="h-full">
       <body className="min-h-full flex flex-col">
         {children}
-        <footer className="flex items-center justify-center gap-3 py-4 text-[10px] text-[#484f58]">
+        <footer className="flex items-center justify-center py-4 text-[10px] text-[#484f58]">
           <span>v{version}</span>
-          <span>·</span>
-          <a href="/about" className="hover:text-[var(--text-sub)] transition-colors">서비스 소개</a>
         </footer>
       </body>
     </html>

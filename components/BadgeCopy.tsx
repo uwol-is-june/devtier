@@ -44,7 +44,7 @@ export function BadgeCopy({ username }: { username: string }) {
   }
 
   return (
-    <div className="w-full max-w-lg flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-4">
       <p className="text-sm text-[var(--text-sub)]">뱃지 코드 — GitHub README에 붙여넣기</p>
 
       {/* ── 옵션 ── */}

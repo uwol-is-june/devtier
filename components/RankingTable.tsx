@@ -83,15 +83,25 @@ export function RankingTable({ initialRows, myData, total }: Props) {
 
   return (
     <div
-      className="rounded-md border border-[var(--border)] overflow-hidden"
-      style={{ background: 'var(--surface)' }}
+      className="rounded-md overflow-hidden"
+      style={{
+        background: 'rgba(0,0,0,0.6)',
+        border: '1px solid rgba(124,255,91,0.1)',
+        animation: 'border-glow 4s ease-in-out infinite',
+      }}
     >
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[480px]">
           <thead>
             <tr
-              className="text-left text-xs text-[var(--text-sub)] uppercase tracking-wider"
-              style={{ borderBottom: '1px solid var(--border)' }}
+              className="text-left uppercase"
+              style={{
+                borderBottom: '1px solid rgba(124,255,91,0.15)',
+                fontFamily: 'var(--font-orbitron), monospace',
+                fontSize: '0.56rem',
+                letterSpacing: '0.13em',
+                color: 'rgba(124,255,91,0.45)',
+              }}
             >
               <th className="px-4 py-3 w-12">#</th>
               <th className="px-4 py-3">GitHub ID</th>
@@ -107,19 +117,28 @@ export function RankingTable({ initialRows, myData, total }: Props) {
               const myRankLabel = myData.tier_rank ? `${myTierLabel} ${myData.tier_rank}` : myTierLabel
               return (
                 <>
-                  <tr style={{ background: 'color-mix(in srgb, #58a6ff 8%, transparent)', borderBottom: '1px solid var(--border)' }}>
-                    <td className="px-4 py-3 text-[var(--text-sub)] font-mono text-xs">{myData.rank}</td>
+                  <tr style={{ background: 'rgba(124,255,91,0.06)', borderLeft: '2px solid rgba(124,255,91,0.5)', borderBottom: '1px solid var(--border)' }}>
+                    <td
+                      className="px-4 py-3 font-mono text-xs"
+                      style={{ fontFamily: 'var(--font-orbitron), monospace', color: 'rgba(255,255,255,0.28)' }}
+                    >{myData.rank}</td>
                     <td className="px-4 py-3">
                       <span className="flex items-center gap-2">
-                        <a href={`/result/${myData.github_id}`} className="text-[#58a6ff] hover:underline font-mono text-sm">
+                        <a
+                          href={`/result/${myData.github_id}`}
+                          className="hover:underline font-mono text-sm"
+                          style={{ color: 'rgba(124,255,91,0.85)' }}
+                          onMouseEnter={e => (e.currentTarget.style.color = '#7CFF5B')}
+                          onMouseLeave={e => (e.currentTarget.style.color = 'rgba(124,255,91,0.85)')}
+                        >
                           {myData.github_id}
                         </a>
                         <span
                           className="text-[10px] px-1.5 py-0.5 rounded font-medium"
                           style={{
-                            background: 'color-mix(in srgb, #58a6ff 15%, transparent)',
-                            color: '#58a6ff',
-                            border: '1px solid color-mix(in srgb, #58a6ff 40%, transparent)',
+                            background: 'rgba(124,255,91,0.12)',
+                            color: '#7CFF5B',
+                            border: '1px solid rgba(124,255,91,0.4)',
                           }}
                         >
                           나
@@ -141,10 +160,16 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                         <span className="text-xs font-medium" style={{ color: myTierColor }}>{myRankLabel}</span>
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text)]">
+                    <td
+                      className="px-4 py-3 text-right"
+                      style={{ fontFamily: 'var(--font-orbitron), monospace', fontWeight: 700, color: '#7CFF5B' }}
+                    >
                       {myData.score.toLocaleString('ko-KR')}
                     </td>
-                    <td className="px-4 py-3 text-right font-mono text-xs text-[var(--text-sub)]">
+                    <td
+                      className="px-4 py-3 text-right"
+                      style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.75rem', color: 'rgba(255,255,255,0.28)' }}
+                    >
                       {myData.percentile != null ? `상위 ${myData.percentile.toFixed(1)}%` : '-'}
                     </td>
                   </tr>
@@ -168,17 +193,24 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                   className="group transition-all duration-150"
                   style={{
                     borderBottom: i < rows.length - 1 ? '1px solid var(--border)' : undefined,
-                    background: isMe ? 'color-mix(in srgb, #58a6ff 8%, transparent)' : undefined,
+                    background: isMe ? 'rgba(124,255,91,0.06)' : undefined,
+                    borderLeft: isMe ? '2px solid rgba(124,255,91,0.5)' : undefined,
                   }}
                 >
-                  <td className="px-4 py-3 text-[var(--text-sub)] font-mono text-xs group-hover:text-[var(--text)] transition-colors">
+                  <td
+                    className="px-4 py-3 font-mono text-xs"
+                    style={{ fontFamily: 'var(--font-orbitron), monospace', color: 'rgba(255,255,255,0.28)' }}
+                  >
                     {i + 1}
                   </td>
                   <td className="px-4 py-3">
                     <span className="flex items-center gap-2">
                       <a
                         href={`/result/${user.github_id}`}
-                        className="text-[#58a6ff] hover:underline font-mono text-sm"
+                        className="hover:underline font-mono text-sm"
+                        style={{ color: 'rgba(124,255,91,0.85)' }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#7CFF5B')}
+                        onMouseLeave={e => (e.currentTarget.style.color = 'rgba(124,255,91,0.85)')}
                       >
                         {user.github_id}
                       </a>
@@ -186,9 +218,9 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                         <span
                           className="text-[10px] px-1.5 py-0.5 rounded font-medium"
                           style={{
-                            background: 'color-mix(in srgb, #58a6ff 15%, transparent)',
-                            color: '#58a6ff',
-                            border: '1px solid color-mix(in srgb, #58a6ff 40%, transparent)',
+                            background: 'rgba(124,255,91,0.12)',
+                            color: '#7CFF5B',
+                            border: '1px solid rgba(124,255,91,0.4)',
                           }}
                         >
                           나
@@ -213,10 +245,16 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                       </span>
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text)]">
+                  <td
+                    className="px-4 py-3 text-right"
+                    style={{ fontFamily: 'var(--font-orbitron), monospace', fontWeight: 700, color: '#7CFF5B' }}
+                  >
                     {user.score.toLocaleString('ko-KR')}
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-xs text-[var(--text-sub)]">
+                  <td
+                    className="px-4 py-3 text-right"
+                    style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.75rem', color: 'rgba(255,255,255,0.28)' }}
+                  >
                     {user.percentile != null ? `상위 ${user.percentile.toFixed(1)}%` : '-'}
                   </td>
                 </tr>
@@ -229,13 +267,12 @@ export function RankingTable({ initialRows, myData, total }: Props) {
       {total > 20 && (
         <div
           className="flex justify-center py-3"
-          style={{ borderTop: '1px solid var(--border)' }}
+          style={{ borderTop: '1px solid rgba(124,255,91,0.1)' }}
         >
           <button
             onClick={handleToggle}
             disabled={loading}
-            className="flex items-center gap-1.5 text-xs text-[var(--text-sub)] hover:text-[var(--text)] transition-colors px-3 py-1.5 rounded disabled:opacity-50"
-            style={{ border: '1px solid var(--border)' }}
+            className="btn-outline flex items-center gap-1.5 disabled:opacity-50"
           >
             {loading ? (
               <>
