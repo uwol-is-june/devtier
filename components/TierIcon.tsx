@@ -54,6 +54,10 @@ export function ChallengerIcon({ size = 56, className = '' }: Props) {
       {/* Glow halo */}
       <circle cx="28" cy="28" r="26" fill="url(#chal-glow)" />
 
+      {/* 3D: depth layer — right-side face and bottom edge of base (drawn behind main crown) */}
+      <polygon points="44,34 46,36 46,43 44,42" fill="#6B4800" opacity="0.55" />
+      <rect x="12" y="40.5" width="32" height="1.5" rx="0.5" fill="#5A3800" opacity="0.75" />
+
       {/* Crown body */}
       <g filter="url(#chal-shadow)">
         {/* Base band */}
@@ -129,6 +133,10 @@ export function DiamondIcon({ size = 56, className = '' }: Props) {
         <polygon points="28,10 34,18 28,16 22,18" fill="white" fillOpacity="0.4" />
         {/* Inner sparkle */}
         <polygon points="28,15 29.5,19 28,23 26.5,19" fill="white" fillOpacity="0.6" />
+        {/* 3D: right-edge depth shadow */}
+        <line x1="42" y1="24" x2="28" y2="46" stroke="#073040" strokeWidth="2.5" strokeOpacity={0.5} strokeLinecap="round" />
+        {/* 3D: top-left highlight edge */}
+        <line x1="14" y1="24" x2="28" y2="10" stroke="white" strokeWidth="1" strokeOpacity={0.4} strokeLinecap="round" />
       </g>
     </svg>
   )
@@ -204,6 +212,10 @@ function MedalIcon({
       <circle cx="28" cy="36" r="12" stroke={lightColor} strokeWidth="0.75" fill="none" strokeOpacity="0.5" />
       {/* Highlight arc */}
       <path d="M 20 30 A 10 10 0 0 1 36 30" stroke="white" strokeWidth="1.5" fill="none" strokeOpacity="0.4" strokeLinecap="round" />
+      {/* 3D: bottom-right shadow crescent (coin depth) */}
+      <path d="M 22 50 A 16 16 0 0 0 44 36" stroke={darkColor} strokeWidth="2.5" fill="none" strokeOpacity={0.45} strokeLinecap="round" />
+      {/* 3D: right-side edge */}
+      <path d="M 43 29 Q 48 36 43 43" stroke={darkColor} strokeWidth="2" fill="none" strokeOpacity={0.3} strokeLinecap="round" />
       {/* Center star */}
       <polygon
         points="28,29 29.5,33.5 34,33.5 30.5,36.5 32,41 28,38 24,41 25.5,36.5 22,33.5 26.5,33.5"

@@ -156,3 +156,43 @@ export async function getScoreData(username: string): Promise<ScoreData> {
     },
   }
 }
+
+export type WeaknessPercentile = {
+  key: string
+  label: string
+  pct: number
+}
+
+export async function getWeaknessPercentiles(username: string): Promise<WeaknessPercentile[]> {
+  const [{ data: user }, { count: total }] = await Promise.all([
+    supabase
+      .from('users')
+      .select('total_contributions, current_streak, longest_streak, contribution_density, peak_intensity, total_stars')
+      .eq('github_id', username)
+      .maybeSingle(),
+    supabase.from('users').select('*', { count: 'exact', head: true }),
+  ])
+
+  if (!user || !total) return []
+
+  const metrics: { key: string; label: string; value: number }[] = [
+    { key: 'total_contributions',  label: '잔디 수',    value: user.total_contributions  ?? 0 },
+    { key: 'current_streak',       label: '현재 스트릭', value: user.current_streak       ?? 0 },
+    { key: 'longest_streak',       label: '최대 스트릭', value: user.longest_streak       ?? 0 },
+    { key: 'contribution_density', label: '밀도',       value: user.contribution_density ?? 0 },
+    { key: 'peak_intensity',       label: '피크 강도',   value: user.peak_intensity       ?? 0 },
+    { key: 'total_stars',          label: '레포 스타',   value: user.total_stars          ?? 0 },
+  ]
+
+  const counts = await Promise.all(
+    metrics.map(({ key, value }) =>
+      supabase.from('users').select('*', { count: 'exact', head: true }).lt(key, value)
+    )
+  )
+
+  return metrics.map(({ key, label }, i) => ({
+    key,
+    label,
+    pct: Math.round(((counts[i].count ?? 0) / total) * 100),
+  }))
+}

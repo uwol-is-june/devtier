@@ -12,7 +12,8 @@ import { TierCardDownload } from '@/components/TierCardDownload'
 import { AchievementGrid } from '@/components/AchievementGrid'
 import { StatTooltip } from '@/components/StatTooltip'
 import { ScoreHistoryChart } from '@/components/ScoreHistoryChart'
-import type { ScoreData } from '@/lib/getScoreData'
+import { WeaknessRadarChart } from '@/components/WeaknessRadarChart'
+import type { ScoreData, WeaknessPercentile } from '@/lib/getScoreData'
 
 const orbitron = Orbitron({
   subsets: ['latin'],
@@ -50,9 +51,10 @@ type Props = {
   username: string
   data: ScoreData | null
   loggedInId: string | undefined
+  weaknessData: WeaknessPercentile[]
 }
 
-export function ResultClient({ username, data, loggedInId }: Props) {
+export function ResultClient({ username, data, loggedInId, weaknessData }: Props) {
   const rootClass = `${orbitron.variable} ${spaceGrotesk.variable}`
   const [activeTab, setActiveTab] = useState<'stats' | 'achievements'>('stats')
 
@@ -290,6 +292,9 @@ export function ResultClient({ username, data, loggedInId }: Props) {
           )}
           {activeTab === 'achievements' && <AchievementGrid username={data.github_id} />}
         </div>
+
+        {/* ── Weakness Analysis ── */}
+        {weaknessData.length > 0 && <WeaknessRadarChart data={weaknessData} />}
 
         {/* ── Score History ── */}
         <ScoreHistoryChart username={data.github_id} />

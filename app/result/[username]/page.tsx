@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import type { Metadata } from 'next'
-import { getScoreData } from '@/lib/getScoreData'
+import { getScoreData, getWeaknessPercentiles } from '@/lib/getScoreData'
 import { createClient } from '@/lib/supabase-server'
 import { ResultClient } from '@/app/_components/ResultClient'
 
@@ -66,12 +66,13 @@ export default async function ResultPage({
   params: Promise<{ username: string }>
 }) {
   const { username } = await params
-  const [data, client] = await Promise.all([
+  const [data, client, weaknessData] = await Promise.all([
     fetchScore(username),
     createClient(),
+    getWeaknessPercentiles(username),
   ])
   const { data: { user } } = await client.auth.getUser()
   const loggedInId = user?.user_metadata?.user_name as string | undefined
 
-  return <ResultClient username={username} data={data} loggedInId={loggedInId} />
+  return <ResultClient username={username} data={data} loggedInId={loggedInId} weaknessData={weaknessData} />
 }

@@ -37,8 +37,8 @@ const FEATURES = [
     num: '02',
     label: 'SCORE_ENGINE',
     title: '전투력 알고리즘',
-    desc: '잔디 수, 연속 스트릭, 최대 스트릭, 레포 스타 등 6가지 지표를 정밀 공식으로 합산.',
-    stat: '6×',
+    desc: '잔디 수, 스트릭, PR, 이슈, 레포 스타, 연도 커밋 등 9가지 지표를 정밀 공식으로 합산.',
+    stat: '9×',
     statLabel: 'METRICS',
     accent: '#7CFF5B',
   },
@@ -62,12 +62,6 @@ const TIERS = [
   { name: '브론즈',  range: '상위 50~100%', color: '#CD7F32', width: '100%' },
 ]
 
-const STATS = [
-  { key: 'INDEXED_USERS',  val: '4,000+' },
-  { key: 'SCORE_METRICS',  val: '6 종'   },
-  { key: 'UPDATE_CYCLE',   val: 'WEEKLY' },
-  { key: 'BADGE_LATENCY',  val: '<200ms' },
-]
 
 const TIER_LABEL: Record<string, string> = {
   challenger: '챌린저',
@@ -199,6 +193,13 @@ export default function HomeClient({
   ranking: RankingRow[]
   rankingTotal: number
 }) {
+  const STATS = [
+    { key: 'INDEXED_USERS',  val: `${rankingTotal.toLocaleString('ko-KR')}+` },
+    { key: 'SCORE_METRICS',  val: '9 종'   },
+    { key: 'UPDATE_CYCLE',   val: 'WEEKLY' },
+    { key: 'BADGE_LATENCY',  val: '<200ms' },
+  ]
+
   const [cardTilts, setCardTilts] = useState(['', '', ''])
   const [systemVisible, setSystemVisible] = useState(false)
   const [rankingVisible, setRankingVisible] = useState(false)
@@ -786,7 +787,10 @@ export default function HomeClient({
               <span style={{ color: '#79C0FF' }}>잔디 수</span>       × 1{'\n'}
               + <span style={{ color: '#79C0FF' }}>현재 스트릭</span> × 3{'\n'}
               + <span style={{ color: '#79C0FF' }}>최대 스트릭</span> × 2{'\n'}
-              + <span style={{ color: '#FFA857' }}>log₂</span>(<span style={{ color: '#79C0FF' }}>스타 + 1</span>) × 10
+              + <span style={{ color: '#FFA857' }}>log₂</span>(<span style={{ color: '#79C0FF' }}>스타 + 1</span>) × 10{'\n'}
+              + <span style={{ color: '#79C0FF' }}>연도 커밋</span>   × 0.5{'\n'}
+              + <span style={{ color: '#79C0FF' }}>총 PR</span>       × 3{'\n'}
+              + <span style={{ color: '#79C0FF' }}>총 이슈</span>     × 1
             </div>
           </div>
         </div>

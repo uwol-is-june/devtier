@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="ko" className="h-full">
       <body className="min-h-full flex flex-col">
         {children}
-        <footer className="flex items-center justify-center py-4 text-[10px] text-[#484f58]">
+        <footer className="flex items-center justify-center py-4 text-[10px] text-[#484f58]" style={{ background: '#000' }}>
           <span>v{version}</span>
         </footer>
       </body>

@@ -45,6 +45,14 @@ function getCssAnimations(perimeter: number, iconW: number): string {
 `
 }
 
+function darken(hex: string, amount = 55): string {
+  const n = parseInt(hex.replace('#', ''), 16)
+  const r = Math.max(0, (n >> 16) - amount)
+  const g = Math.max(0, ((n >> 8) & 0xff) - amount)
+  const b = Math.max(0, (n & 0xff) - amount)
+  return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`
+}
+
 export function generateBadgeSvg({ tier, tier_rank, score, percentile, theme = 'dark', size = 'md' }: BadgeInput): string {
   const meta = TIER_META[tier] ?? TIER_META.bronze
   const tc = THEME_CONFIGS[theme]
@@ -63,14 +71,18 @@ export function generateBadgeSvg({ tier, tier_rank, score, percentile, theme = '
 
   // Icon shapes drawn in 56×56 coordinate space, scaled to iconW via parent <g>
   let iconBody: string
+  const dk = darken(color)
   if (icon === 'crown') {
     iconBody = `
+    <polygon points="46,38 48,40 48,43 46,41" fill="${dk}" opacity="0.55"/>
+    <rect x="10" y="39.5" width="36" height="2" rx="0.5" fill="${darken(color, 70)}" opacity="0.7"/>
     <path d="M10,38 L10,22 L16,30 L22,18 L28,26 L34,18 L40,30 L46,22 L46,38 Z"
           fill="${color}" opacity="0.9"/>
     <rect x="10" y="36" width="36" height="5" rx="1" fill="${color}"/>
     <circle cx="19" cy="38.5" r="2.5" fill="#fff" opacity="0.4"/>
     <circle cx="28" cy="38.5" r="2.5" fill="#fff" opacity="0.4"/>
-    <circle cx="37" cy="38.5" r="2.5" fill="#fff" opacity="0.4"/>`
+    <circle cx="37" cy="38.5" r="2.5" fill="#fff" opacity="0.4"/>
+    <rect x="10" y="36" width="36" height="2" rx="0.5" fill="#fff" opacity="0.12"/>`
   } else if (icon === 'gem') {
     iconBody = `
     <polygon points="28,12 42,22 42,34 28,44 14,34 14,22"
@@ -80,14 +92,18 @@ export function generateBadgeSvg({ tier, tier_rank, score, percentile, theme = '
     <line x1="28" y1="22" x2="28" y2="44" stroke="${color}" stroke-width="0.8" opacity="0.3"/>
     <line x1="28" y1="22" x2="14" y2="22" stroke="${color}" stroke-width="0.8" opacity="0.3"/>
     <line x1="28" y1="22" x2="42" y2="22" stroke="${color}" stroke-width="0.8" opacity="0.3"/>
-    <circle cx="28" cy="12" r="2" fill="${color}" opacity="0.8"/>`
+    <circle cx="28" cy="12" r="2" fill="${color}" opacity="0.8"/>
+    <line x1="42" y1="22" x2="28" y2="44" stroke="${dk}" stroke-width="2.5" stroke-opacity="0.5" stroke-linecap="round"/>
+    <line x1="14" y1="22" x2="28" y2="12" stroke="white" stroke-width="1" stroke-opacity="0.45" stroke-linecap="round"/>`
   } else {
     iconBody = `
     <polygon points="28,12 40,18 44,28 40,38 28,44 16,38 12,28 16,18"
              fill="none" stroke="${color}" stroke-width="2"/>
     <polygon points="28,12 40,18 28,21 16,18" fill="${color}" opacity="0.2"/>
     <circle cx="28" cy="28" r="7" fill="${color}" opacity="0.35"/>
-    <circle cx="28" cy="28" r="4" fill="${color}" opacity="0.5"/>`
+    <circle cx="28" cy="28" r="4" fill="${color}" opacity="0.5"/>
+    <path d="M 40 38 L 44 28 L 40 18" stroke="${dk}" stroke-width="2" fill="none" stroke-opacity="0.5" stroke-linecap="round"/>
+    <path d="M 16 18 L 12 28 L 16 38" stroke="white" stroke-width="1" fill="none" stroke-opacity="0.3" stroke-linecap="round"/>`
   }
 
   // Animation overlays use iconW-based coordinates (not the scaled 56×56 space)
