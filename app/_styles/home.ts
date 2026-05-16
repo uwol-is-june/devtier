@@ -417,15 +417,15 @@ export const STYLES = `
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .stat-key {
   font-family: var(--font-orbitron), monospace;
-  font-size: 0.56rem;
-  letter-spacing: 0.13em;
-  color: rgba(255,255,255,0.28);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.45);
 }
 
 .stat-val {

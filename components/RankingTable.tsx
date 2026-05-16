@@ -98,16 +98,16 @@ export function RankingTable({ initialRows, myData, total }: Props) {
               style={{
                 borderBottom: '1px solid rgba(124,255,91,0.15)',
                 fontFamily: 'var(--font-orbitron), monospace',
-                fontSize: '0.56rem',
-                letterSpacing: '0.13em',
-                color: 'rgba(124,255,91,0.45)',
+                fontSize: '0.6rem',
+                letterSpacing: '0.18em',
+                color: 'rgba(124,255,91,0.55)',
               }}
             >
-              <th className="px-4 py-3 w-12">#</th>
-              <th className="px-4 py-3">GitHub ID</th>
-              <th className="px-4 py-3">티어</th>
-              <th className="px-4 py-3 text-right">전투력</th>
-              <th className="px-4 py-3 text-right">백분위</th>
+              <th className="px-4 py-3.5 w-12">#</th>
+              <th className="px-4 py-3.5">GitHub ID</th>
+              <th className="px-4 py-3.5">티어</th>
+              <th className="px-4 py-3.5 text-right">전투력</th>
+              <th className="px-4 py-3.5 text-right">백분위</th>
             </tr>
           </thead>
           <tbody>
@@ -119,14 +119,14 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                 <>
                   <tr style={{ background: 'rgba(124,255,91,0.06)', borderLeft: '2px solid rgba(124,255,91,0.5)', borderBottom: '1px solid var(--border)' }}>
                     <td
-                      className="px-4 py-3 font-mono text-xs"
+                      className="px-4 py-3.5 font-mono text-sm"
                       style={{ fontFamily: 'var(--font-orbitron), monospace', color: 'rgba(255,255,255,0.28)' }}
                     >{myData.rank}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <span className="flex items-center gap-2">
                         <a
                           href={`/result/${myData.github_id}`}
-                          className="hover:underline font-mono text-sm"
+                          className="hover:underline font-mono text-base"
                           style={{ color: 'rgba(124,255,91,0.85)' }}
                           onMouseEnter={e => (e.currentTarget.style.color = '#7CFF5B')}
                           onMouseLeave={e => (e.currentTarget.style.color = 'rgba(124,255,91,0.85)')}
@@ -154,20 +154,20 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                         </a>
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <span className="flex items-center gap-2">
                         <TierIcon tier={myData.tier} size={20} />
                         <span className="text-xs font-medium" style={{ color: myTierColor }}>{myRankLabel}</span>
                       </span>
                     </td>
                     <td
-                      className="px-4 py-3 text-right"
+                      className="px-4 py-3.5 text-right"
                       style={{ fontFamily: 'var(--font-orbitron), monospace', fontWeight: 700, color: '#7CFF5B' }}
                     >
                       {myData.score.toLocaleString('ko-KR')}
                     </td>
                     <td
-                      className="px-4 py-3 text-right"
+                      className="px-4 py-3.5 text-right"
                       style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.75rem', color: 'rgba(255,255,255,0.28)' }}
                     >
                       {myData.percentile != null ? `상위 ${myData.percentile.toFixed(1)}%` : '-'}
@@ -198,16 +198,16 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                   }}
                 >
                   <td
-                    className="px-4 py-3 font-mono text-xs"
+                    className="px-4 py-3.5 font-mono text-sm"
                     style={{ fontFamily: 'var(--font-orbitron), monospace', color: 'rgba(255,255,255,0.28)' }}
                   >
                     {i + 1}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5">
                     <span className="flex items-center gap-2">
                       <a
                         href={`/result/${user.github_id}`}
-                        className="hover:underline font-mono text-sm"
+                        className="hover:underline font-mono text-base"
                         style={{ color: 'rgba(124,255,91,0.85)' }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#7CFF5B')}
                         onMouseLeave={e => (e.currentTarget.style.color = 'rgba(124,255,91,0.85)')}
@@ -237,22 +237,22 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                       </a>
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5">
                     <span className="flex items-center gap-2">
                       <TierIcon tier={user.tier} size={20} />
-                      <span className="text-xs font-medium" style={{ color: tierColor }}>
+                      <span className="text-sm font-medium" style={{ color: tierColor }}>
                         {rankLabel}
                       </span>
                     </span>
                   </td>
                   <td
-                    className="px-4 py-3 text-right"
+                    className="px-4 py-3.5 text-right"
                     style={{ fontFamily: 'var(--font-orbitron), monospace', fontWeight: 700, color: '#7CFF5B' }}
                   >
                     {user.score.toLocaleString('ko-KR')}
                   </td>
                   <td
-                    className="px-4 py-3 text-right"
+                    className="px-4 py-3.5 text-right"
                     style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.75rem', color: 'rgba(255,255,255,0.28)' }}
                   >
                     {user.percentile != null ? `상위 ${user.percentile.toFixed(1)}%` : '-'}

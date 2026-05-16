@@ -170,6 +170,12 @@ export function ResultClient({ username, data, loggedInId }: Props) {
             </span>
           </div>
 
+          {data.tier !== 'challenger' && data.tier_rank && (
+            <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', marginTop: '0.3rem' }}>
+              RANK {data.tier_rank} / 4 &nbsp;·&nbsp; 1이 최고 등급
+            </div>
+          )}
+
           <TierIcon tier={data.tier} size={80} />
 
           <a

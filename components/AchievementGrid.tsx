@@ -117,7 +117,7 @@ function AchievementCard({
   if (item.unlocked) {
     return (
       <div
-        className="rounded-md p-3 flex flex-col gap-1.5"
+        className="rounded-md p-4 flex flex-col gap-2"
         style={{
           background: 'var(--surface)',
           border: `1px solid ${color}`,
@@ -134,11 +134,11 @@ function AchievementCard({
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-sm font-semibold text-[var(--text)] leading-tight">{item.name_ko}</span>
+          <span className="text-base font-semibold text-[var(--text)] leading-tight">{item.name_ko}</span>
           <AchievementTooltip description={item.description} percentage={percentage} />
         </div>
         {item.unlocked_at && (
-          <span className="text-[10px]" style={{ color: '#8b949e' }}>
+          <span className="text-xs" style={{ color: '#8b949e' }}>
             {new Date(item.unlocked_at).toLocaleDateString('ko-KR')} 달성
           </span>
         )}
@@ -148,7 +148,7 @@ function AchievementCard({
 
   return (
     <div
-      className="rounded-md p-3 flex flex-col gap-1.5"
+      className="rounded-md p-4 flex flex-col gap-2"
       style={{
         background: 'var(--surface)',
         border: '1px solid var(--border)',
@@ -165,12 +165,12 @@ function AchievementCard({
         </span>
       </div>
       <div className="flex items-center gap-1">
-        <span className="text-sm font-semibold text-[var(--text-sub)] leading-tight">{item.name_ko}</span>
+        <span className="text-base font-semibold text-[var(--text-sub)] leading-tight">{item.name_ko}</span>
         <AchievementTooltip description={item.description} percentage={percentage} />
       </div>
       {item.progress && (
         <div className="flex flex-col gap-1 mt-0.5">
-          <div className="flex justify-between text-[10px]" style={{ color: '#8b949e' }}>
+          <div className="flex justify-between text-xs" style={{ color: '#8b949e' }}>
             <span>{item.progress.display}</span>
             <span>{progressPct}%</span>
           </div>
@@ -243,11 +243,11 @@ export function AchievementGrid({ username }: { username: string }) {
 
       {/* 그리드 */}
       {loading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-md p-3 h-24 animate-pulse"
+              className="rounded-md p-4 h-28 animate-pulse"
               style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
             />
           ))}
@@ -255,7 +255,7 @@ export function AchievementGrid({ username }: { username: string }) {
       ) : filtered.length === 0 ? (
         <p className="text-sm text-[var(--text-sub)] text-center py-8">해당 카테고리 도전과제가 없습니다.</p>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {filtered.map(item => (
             <AchievementCard
               key={item.id}

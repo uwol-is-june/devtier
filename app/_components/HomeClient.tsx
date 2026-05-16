@@ -27,10 +27,10 @@ const FEATURES = [
   {
     num: '01',
     label: 'TIER_SYSTEM',
-    title: '6단계 티어 시스템',
-    desc: '브론즈부터 챌린저까지. GitHub 잔디 데이터로 한국 개발자 전체와 실시간 비교.',
-    stat: '6',
-    statLabel: 'TIER LEVELS',
+    title: '6티어 × 4단계 시스템',
+    desc: '브론즈부터 챌린저까지, 각 티어는 1~4단계로 세분화. GitHub 잔디 데이터로 한국 개발자 전체와 실시간 비교.',
+    stat: '24',
+    statLabel: 'TOTAL RANKS',
     accent: '#FF4655',
   },
   {
@@ -711,7 +711,7 @@ export default function HomeClient({
                 lineHeight: 1.75,
                 margin: 0,
               }}>
-                한국 개발자 4,000+명의 GitHub 데이터를 주 1회 수집·분석합니다.
+                한국 개발자 {rankingTotal.toLocaleString('ko-KR')}+명의 GitHub 데이터를 주 1회 수집·분석합니다.
                 전투력 점수, 티어, 백분위가 자동으로 갱신됩니다.
               </p>
             </div>
