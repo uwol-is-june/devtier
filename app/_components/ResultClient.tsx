@@ -10,6 +10,8 @@ import { BadgeCopy } from '@/components/BadgeCopy'
 import { ShareButtons } from '@/components/ShareButtons'
 import { TierCardDownload } from '@/components/TierCardDownload'
 import { AchievementGrid } from '@/components/AchievementGrid'
+import { StatTooltip } from '@/components/StatTooltip'
+import { ScoreHistoryChart } from '@/components/ScoreHistoryChart'
 import type { ScoreData } from '@/lib/getScoreData'
 
 const orbitron = Orbitron({
@@ -94,14 +96,20 @@ export function ResultClient({ username, data, loggedInId }: Props) {
   const fullTierLabel = data.tier_rank ? `${tierLabel} ${data.tier_rank}` : tierLabel
   const isOwn = loggedInId === data.github_id
 
+  const currentYear = new Date().getFullYear()
   const stats = [
-    { key: 'TOTAL_CONTRIBUTIONS', label: '총 잔디 수',   value: data.details.total_contributions.toLocaleString('ko-KR') },
-    { key: 'CURRENT_STREAK',      label: '현재 스트릭', value: `${data.details.current_streak}일` },
-    { key: 'LONGEST_STREAK',      label: '최대 스트릭', value: `${data.details.longest_streak}일` },
-    { key: 'CONTRIBUTION_DENSITY', label: '잔디 밀도',  value: `${(data.details.contribution_density * 100).toFixed(1)}%` },
-    { key: 'PEAK_INTENSITY',       label: '피크 강도',  value: `${data.details.peak_intensity}/일` },
-    { key: 'TOTAL_STARS',          label: '레포 스타',  value: data.details.total_stars.toLocaleString('ko-KR') },
+    { key: 'TOTAL_CONTRIBUTIONS',  label: '총 잔디 수',       value: data.details.total_contributions.toLocaleString('ko-KR'),  tooltip: '최근 1년(365일) GitHub contribution 총합. 전투력 점수에 ×1 가중치.' },
+    { key: 'CURRENT_STREAK',       label: '현재 스트릭',      value: `${data.details.current_streak}일`,                        tooltip: '오늘 기준 연속으로 커밋한 날수. 가중치 ×3으로 모든 지표 중 가장 높음.' },
+    { key: 'LONGEST_STREAK',       label: '최대 스트릭',      value: `${data.details.longest_streak}일`,                        tooltip: '역대 최장 연속 커밋 기록. 가중치 ×2.' },
+    { key: 'CONTRIBUTION_DENSITY', label: '잔디 밀도',        value: `${(data.details.contribution_density * 100).toFixed(1)}%`, tooltip: '365일 중 커밋한 날의 비율 (0~100%). 가중치 ×100.' },
+    { key: 'PEAK_INTENSITY',       label: '피크 강도',        value: `${data.details.peak_intensity}/일`,                       tooltip: '하루에 가장 많이 커밋한 횟수. 가중치 ×0.5.' },
+    { key: 'TOTAL_STARS',          label: '레포 스타',        value: data.details.total_stars.toLocaleString('ko-KR'),           tooltip: '본인 소유 레포 스타 합계 (최대 100개 레포). log2(n+1)×10 스케일.' },
+    { key: 'CURRENT_YEAR_COMMITS', label: `${currentYear}년 커밋`, value: `${data.details.current_year_commits.toLocaleString('ko-KR')}회`, tooltip: `${currentYear}년 1월 1일부터 현재까지의 커밋 수. 가중치 ×0.5.` },
+    { key: 'TOTAL_PRS',            label: '총 PR',            value: `${data.details.total_prs.toLocaleString('ko-KR')}개`,     tooltip: '최근 1년 Pull Request 수. 커밋 대비 고가치 지표, 가중치 ×3.' },
+    { key: 'TOTAL_ISSUES',         label: '총 이슈',          value: `${data.details.total_issues.toLocaleString('ko-KR')}개`,  tooltip: '최근 1년 Issue 수. 오픈소스 참여 지표, 가중치 ×1.' },
   ]
+
+  const LANG_COLORS = ['#7CFF5B', '#56C8D8', '#FFD700', '#FF4655', '#5AC9A6']
 
   return (
     <div
@@ -188,6 +196,11 @@ export function ResultClient({ username, data, loggedInId }: Props) {
             <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.52rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.3)', marginTop: '0.3rem' }}>
               점
             </div>
+            {data.next_tier_gap !== null && (
+              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.5rem' }}>
+                ▲ {data.next_tier_label}까지 {data.next_tier_gap.toLocaleString('ko-KR')}점
+              </div>
+            )}
           </div>
 
           {data.percentile !== null && (
@@ -235,14 +248,45 @@ export function ResultClient({ username, data, loggedInId }: Props) {
             })}
           </div>
           <div style={{ borderBottom: '1px solid rgba(124,255,91,0.07)', marginBottom: '1.25rem' }} />
-          {activeTab === 'stats' && stats.map(stat => (
-            <div key={stat.key} className="stat-row">
-              <div className="stat-key">{stat.key}</div>
-              <div className="stat-val">{stat.value}</div>
-            </div>
-          ))}
+          {activeTab === 'stats' && (
+            <>
+              {stats.map(stat => (
+                <div key={stat.key} className="stat-row">
+                  <div className="stat-key">{stat.key} <StatTooltip text={stat.tooltip} /></div>
+                  <div className="stat-val">{stat.value}</div>
+                </div>
+              ))}
+              {data.details.top_languages.length > 0 && (
+                <div style={{ marginTop: '1.25rem' }}>
+                  <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.5rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '0.6rem' }}>
+                    TOP_LANGUAGES
+                  </div>
+                  <div style={{ display: 'flex', height: '6px', borderRadius: '3px', overflow: 'hidden', gap: '1px' }}>
+                    {data.details.top_languages.map((lang, i) => (
+                      <div
+                        key={lang.name}
+                        style={{ width: `${lang.pct}%`, background: LANG_COLORS[i % LANG_COLORS.length], borderRadius: '2px' }}
+                        title={`${lang.name} ${lang.pct.toFixed(1)}%`}
+                      />
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1rem', marginTop: '0.5rem' }}>
+                    {data.details.top_languages.map((lang, i) => (
+                      <span key={lang.name} style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: LANG_COLORS[i % LANG_COLORS.length] }} />
+                        {lang.name} {lang.pct.toFixed(1)}%
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           {activeTab === 'achievements' && <AchievementGrid username={data.github_id} />}
         </div>
+
+        {/* ── Score History ── */}
+        <ScoreHistoryChart username={data.github_id} />
 
         {/* ── Badge (본인만) ── */}
         {isOwn && (

@@ -42,6 +42,7 @@ async function main() {
       const stats = await fetchContributions(user.github_id)
       const score = calcScore(stats)
 
+      const now = new Date().toISOString()
       const { error } = await supabase.from('users').upsert(
         {
           github_id: user.github_id,
@@ -52,11 +53,20 @@ async function main() {
           contribution_density: stats.contribution_density,
           peak_intensity: stats.peak_intensity,
           total_stars: stats.total_stars,
-          updated_at: new Date().toISOString(),
+          current_year_commits: stats.current_year_commits,
+          total_prs: stats.total_prs,
+          total_issues: stats.total_issues,
+          top_languages: stats.top_languages,
+          updated_at: now,
         },
         { onConflict: 'github_id' },
       )
       if (error) throw new Error(error.message)
+
+      // score_history INSERT + 30일 초과 행 삭제
+      await supabase.from('score_history').insert({ github_id: user.github_id, score, recorded_at: now })
+      const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      await supabase.from('score_history').delete().eq('github_id', user.github_id).lt('recorded_at', cutoff)
 
       processed++
       if (processed % 100 === 0) {
@@ -83,6 +93,7 @@ async function main() {
       try {
         const stats = await fetchContributions(user.github_id)
         const score = calcScore(stats)
+        const now = new Date().toISOString()
         const { error } = await supabase.from('users').upsert(
           {
             github_id: user.github_id,
@@ -93,11 +104,18 @@ async function main() {
             contribution_density: stats.contribution_density,
             peak_intensity: stats.peak_intensity,
             total_stars: stats.total_stars,
-            updated_at: new Date().toISOString(),
+            current_year_commits: stats.current_year_commits,
+            total_prs: stats.total_prs,
+            total_issues: stats.total_issues,
+            top_languages: stats.top_languages,
+            updated_at: now,
           },
           { onConflict: 'github_id' },
         )
         if (error) throw new Error(error.message)
+        await supabase.from('score_history').insert({ github_id: user.github_id, score, recorded_at: now })
+        const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        await supabase.from('score_history').delete().eq('github_id', user.github_id).lt('recorded_at', cutoff)
         processed++
         console.log(`  [재시도 성공] ${user.github_id}`)
       } catch (err) {

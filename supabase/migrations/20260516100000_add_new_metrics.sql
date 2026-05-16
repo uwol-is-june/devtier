@@ -1,0 +1,5 @@
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS current_year_commits  INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS total_prs             INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS total_issues          INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS top_languages         JSONB;

@@ -10,7 +10,11 @@ create table public.users (
   percentile            float,
   tier                  text,
   tier_rank             integer,
-  updated_at            timestamptz default now()
+  updated_at            timestamptz default now(),
+  current_year_commits  integer not null default 0,
+  total_prs             integer not null default 0,
+  total_issues          integer not null default 0,
+  top_languages         jsonb
 );
 
 create index users_score_idx on public.users(score desc);
