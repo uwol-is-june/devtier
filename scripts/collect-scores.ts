@@ -1,3 +1,4 @@
+import fs from 'fs'
 import { supabase } from '@/lib/supabase'
 import { fetchContributions } from '@/lib/github'
 import { calcScore } from '@/lib/score'
@@ -5,9 +6,36 @@ import { calcScore } from '@/lib/score'
 const DB_CHUNK = 1000
 const GITHUB_DELAY_MS = 750
 const RATE_LIMIT_DELAY_MS = 60_000
+const CHECKPOINT_FILE = '.collect-checkpoint'
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function isRetryable(msg: string): boolean {
+  const lower = msg.toLowerCase()
+  return (
+    lower.includes('rate limit') ||
+    lower.includes('canceled') ||
+    lower.includes('cancelled') ||
+    lower.includes('abort') ||
+    lower.includes('ecanceled') ||
+    lower.includes('socket hang up') ||
+    lower.includes('econnreset')
+  )
+}
+
+function loadCheckpoint(): Set<string> {
+  try {
+    const raw = fs.readFileSync(CHECKPOINT_FILE, 'utf-8')
+    return new Set(JSON.parse(raw))
+  } catch {
+    return new Set()
+  }
+}
+
+function saveCheckpoint(done: Set<string>) {
+  fs.writeFileSync(CHECKPOINT_FILE, JSON.stringify([...done]))
 }
 
 async function fetchAllUsers(): Promise<{ id: number; github_id: string }[]> {
@@ -28,62 +56,71 @@ async function fetchAllUsers(): Promise<{ id: number; github_id: string }[]> {
   return all
 }
 
+async function processUser(github_id: string) {
+  const stats = await fetchContributions(github_id)
+  const score = calcScore(stats)
+
+  const now = new Date().toISOString()
+  const { error } = await supabase.from('users').upsert(
+    {
+      github_id,
+      score,
+      total_contributions: stats.total_contributions,
+      current_streak: stats.current_streak,
+      longest_streak: stats.longest_streak,
+      contribution_density: stats.contribution_density,
+      peak_intensity: stats.peak_intensity,
+      total_stars: stats.total_stars,
+      current_year_commits: stats.current_year_commits,
+      total_prs: stats.total_prs,
+      total_issues: stats.total_issues,
+      top_languages: stats.top_languages,
+      updated_at: now,
+    },
+    { onConflict: 'github_id' },
+  )
+  if (error) throw new Error(error.message)
+
+  await supabase.from('score_history').insert({ github_id, score, recorded_at: now })
+  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+  await supabase.from('score_history').delete().eq('github_id', github_id).lt('recorded_at', cutoff)
+}
+
 async function main() {
   const startTime = Date.now()
   const users = await fetchAllUsers()
-  console.log(`총 ${users.length}명 점수 계산 시작`)
+  const checkpoint = loadCheckpoint()
+
+  const remaining = users.filter((u) => !checkpoint.has(u.github_id))
+  console.log(
+    `총 ${users.length}명 중 ${remaining.length}명 점수 계산 시작` +
+      (checkpoint.size > 0 ? ` (체크포인트: ${checkpoint.size}명 건너뜀)` : ''),
+  )
 
   const failed: string[] = []
   const retryQueue: typeof users = []
   let processed = 0
 
-  for (const user of users) {
+  for (const user of remaining) {
     try {
-      const stats = await fetchContributions(user.github_id)
-      const score = calcScore(stats)
-
-      const now = new Date().toISOString()
-      const { error } = await supabase.from('users').upsert(
-        {
-          github_id: user.github_id,
-          score,
-          total_contributions: stats.total_contributions,
-          current_streak: stats.current_streak,
-          longest_streak: stats.longest_streak,
-          contribution_density: stats.contribution_density,
-          peak_intensity: stats.peak_intensity,
-          total_stars: stats.total_stars,
-          current_year_commits: stats.current_year_commits,
-          total_prs: stats.total_prs,
-          total_issues: stats.total_issues,
-          top_languages: stats.top_languages,
-          updated_at: now,
-        },
-        { onConflict: 'github_id' },
-      )
-      if (error) throw new Error(error.message)
-
-      // score_history INSERT + 30일 초과 행 삭제
-      await supabase.from('score_history').insert({ github_id: user.github_id, score, recorded_at: now })
-      const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-      await supabase.from('score_history').delete().eq('github_id', user.github_id).lt('recorded_at', cutoff)
-
+      await processUser(user.github_id)
+      checkpoint.add(user.github_id)
       processed++
       if (processed % 100 === 0) {
-        console.log(`${processed}/${users.length} 완료 (실패: ${failed.length}, 재시도 대기: ${retryQueue.length})`)
+        saveCheckpoint(checkpoint)
+        console.log(`${checkpoint.size}/${users.length} 완료 (실패: ${failed.length}, 재시도 대기: ${retryQueue.length})`)
       }
+      await delay(GITHUB_DELAY_MS)
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
-      if (msg.toLowerCase().includes('rate limit')) {
+      if (isRetryable(msg)) {
         retryQueue.push(user)
-        console.warn(`  [RATE LIMIT] ${user.github_id} → 재시도 큐 (${retryQueue.length}명)`)
+        console.warn(`  [RETRY] ${user.github_id} → 재시도 큐 (${retryQueue.length}명): ${msg}`)
       } else {
         console.warn(`[SKIP] ${user.github_id}: ${msg}`)
         failed.push(user.github_id)
       }
     }
-
-    await delay(GITHUB_DELAY_MS)
   }
 
   if (retryQueue.length > 0) {
@@ -91,41 +128,20 @@ async function main() {
     await delay(RATE_LIMIT_DELAY_MS)
     for (const user of retryQueue) {
       try {
-        const stats = await fetchContributions(user.github_id)
-        const score = calcScore(stats)
-        const now = new Date().toISOString()
-        const { error } = await supabase.from('users').upsert(
-          {
-            github_id: user.github_id,
-            score,
-            total_contributions: stats.total_contributions,
-            current_streak: stats.current_streak,
-            longest_streak: stats.longest_streak,
-            contribution_density: stats.contribution_density,
-            peak_intensity: stats.peak_intensity,
-            total_stars: stats.total_stars,
-            current_year_commits: stats.current_year_commits,
-            total_prs: stats.total_prs,
-            total_issues: stats.total_issues,
-            top_languages: stats.top_languages,
-            updated_at: now,
-          },
-          { onConflict: 'github_id' },
-        )
-        if (error) throw new Error(error.message)
-        await supabase.from('score_history').insert({ github_id: user.github_id, score, recorded_at: now })
-        const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-        await supabase.from('score_history').delete().eq('github_id', user.github_id).lt('recorded_at', cutoff)
+        await processUser(user.github_id)
+        checkpoint.add(user.github_id)
         processed++
         console.log(`  [재시도 성공] ${user.github_id}`)
+        await delay(GITHUB_DELAY_MS)
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)
         console.warn(`[재시도 실패] ${user.github_id}: ${msg}`)
         failed.push(user.github_id)
       }
-      await delay(GITHUB_DELAY_MS)
     }
   }
+
+  fs.rmSync(CHECKPOINT_FILE, { force: true })
 
   console.log(`\n완료: ${processed}명 성공, ${failed.length}명 실패`)
   if (failed.length > 0) {

@@ -1,4 +1,11 @@
 export default function ResultLoading() {
+  const lines = [
+    '> GitHub 데이터 수집 중...',
+    '> 잔디 분석 중...',
+    '> 전투력 계산 중...',
+    '> 티어 판정 중...',
+  ]
+
   return (
     <div style={{ minHeight: '100vh', background: '#000', color: '#e6edf3', position: 'relative', overflow: 'hidden' }}>
       <style>{`
@@ -6,8 +13,31 @@ export default function ResultLoading() {
           0%, 100% { opacity: 0.12; }
           50%       { opacity: 0.28; }
         }
-        .ske { background: rgba(124,255,91,0.14); border-radius: 3px; animation: cyber-pulse 1.8s ease-in-out infinite; }
+        @keyframes fadeInLine {
+          from { opacity: 0; transform: translateX(-6px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0; }
+        }
+        .ske     { background: rgba(124,255,91,0.14); border-radius: 3px; animation: cyber-pulse 1.8s ease-in-out infinite; }
         .ske-dim { background: rgba(255,255,255,0.06); border-radius: 3px; animation: cyber-pulse 1.8s ease-in-out infinite; }
+        .scan-line {
+          opacity: 0;
+          animation: fadeInLine 0.3s ease forwards;
+          font-family: monospace;
+          font-size: 13px;
+          color: #7cff5b;
+          line-height: 1.8;
+          white-space: nowrap;
+        }
+        .cursor {
+          display: inline-block;
+          animation: blink 0.8s step-end infinite;
+          color: #7cff5b;
+          font-family: monospace;
+        }
       `}</style>
 
       {/* Nav skeleton */}
@@ -21,6 +51,23 @@ export default function ResultLoading() {
 
         {/* Tier hero card */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', padding: '2.5rem', background: 'rgba(0,0,0,0.72)', border: '1.5px solid rgba(124,255,91,0.12)', borderRadius: 8 }}>
+
+          {/* 분석 텍스트 블록 */}
+          <div style={{ width: '100%', padding: '1rem 1.25rem', background: 'rgba(124,255,91,0.04)', border: '1px solid rgba(124,255,91,0.12)', borderRadius: 6 }}>
+            {lines.map((line, i) => (
+              <div
+                key={i}
+                className="scan-line"
+                style={{ animationDelay: `${i * 0.5}s` }}
+              >
+                {line}
+                {i === lines.length - 1 && (
+                  <span className="cursor" style={{ animationDelay: `${(lines.length - 1) * 0.5 + 0.3}s` }}> █</span>
+                )}
+              </div>
+            ))}
+          </div>
+
           <div className="ske" style={{ width: 160, height: 32 }} />
           <div className="ske-dim" style={{ width: 80, height: 80, borderRadius: '50%' }} />
           <div className="ske-dim" style={{ width: 100, height: 12 }} />
