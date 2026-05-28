@@ -54,14 +54,22 @@ export async function fetchContributions(username: string): Promise<Contribution
   const currentYear = new Date().getFullYear()
   const currentYearStart = `${currentYear}-01-01T00:00:00Z`
 
-  const res = await fetch(GITHUB_GRAPHQL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-    },
-    body: JSON.stringify({ query: buildQuery(currentYearStart), variables: { username } }),
-  })
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 30_000)
+  let res: Response
+  try {
+    res = await fetch(GITHUB_GRAPHQL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      },
+      body: JSON.stringify({ query: buildQuery(currentYearStart), variables: { username } }),
+      signal: controller.signal,
+    })
+  } finally {
+    clearTimeout(timeoutId)
+  }
 
   if (!res.ok) {
     throw new Error(`GitHub API error: ${res.status}`)

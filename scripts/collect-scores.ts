@@ -81,9 +81,11 @@ async function processUser(github_id: string) {
   )
   if (error) throw new Error(error.message)
 
-  await supabase.from('score_history').insert({ github_id, score, recorded_at: now })
-  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  await supabase.from('score_history').delete().eq('github_id', github_id).lt('recorded_at', cutoff)
+  try {
+    await supabase.from('score_history').insert({ github_id, score, recorded_at: now })
+    const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+    await supabase.from('score_history').delete().eq('github_id', github_id).lt('recorded_at', cutoff)
+  } catch { /* score_history 실패는 점수 저장에 영향 없음 */ }
 }
 
 async function main() {
@@ -141,8 +143,6 @@ async function main() {
     }
   }
 
-  fs.rmSync(CHECKPOINT_FILE, { force: true })
-
   console.log(`\n완료: ${processed}명 성공, ${failed.length}명 실패`)
   if (failed.length > 0) {
     console.log('실패 목록:', failed.join(', '))
@@ -157,6 +157,8 @@ async function main() {
   })
   if (logError) console.warn('batch_logs 기록 실패:', logError.message)
   else console.log(`배치 로그 기록 완료 (소요: ${duration}초)`)
+
+  fs.rmSync(CHECKPOINT_FILE, { force: true })
 }
 
 main().catch((err) => {
