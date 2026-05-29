@@ -1,14 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useT } from '@/context/LangContext'
 
 type Theme = 'dark' | 'light'
 type Size  = 'sm' | 'md' | 'lg'
 type Align = 'left' | 'center' | 'right'
-
-const THEME_OPTIONS: [Theme, string][] = [['dark', '다크'], ['light', '라이트']]
-const SIZE_OPTIONS:  [Size,  string][] = [['sm', '작게'], ['md', '보통'], ['lg', '크게']]
-const ALIGN_OPTIONS: [Align, string][] = [['left', '왼쪽'], ['center', '가운데'], ['right', '오른쪽']]
 
 const BASE = 'https://devtier-brown.vercel.app'
 
@@ -17,6 +14,7 @@ export function BadgeCopy({ username }: { username: string }) {
   const [size,  setSize]  = useState<Size>('md')
   const [align, setAlign] = useState<Align>('left')
   const [copied, setCopied] = useState(false)
+  const { t } = useT()
 
   const previewUrl = `/api/badge/${username}?theme=${theme}&size=${size}`
   const badgeUrl   = `${BASE}/api/badge/${username}?theme=${theme}&size=${size}`
@@ -43,24 +41,26 @@ export function BadgeCopy({ username }: { username: string }) {
     } as const
   }
 
+  const OPTIONS: [string, [string, string][], string, (v: string) => void][] = [
+    [t.badge.themeLabel, [['dark', t.badge.themes.dark], ['light', t.badge.themes.light]], theme, (v) => setTheme(v as Theme)],
+    [t.badge.sizeLabel,  [['sm', t.badge.sizes.sm], ['md', t.badge.sizes.md], ['lg', t.badge.sizes.lg]], size, (v) => setSize(v as Size)],
+    [t.badge.alignLabel, [['left', t.badge.aligns.left], ['center', t.badge.aligns.center], ['right', t.badge.aligns.right]], align, (v) => setAlign(v as Align)],
+  ]
+
   return (
     <div className="w-full flex flex-col gap-4">
-      <p className="text-sm text-[var(--text-sub)]">뱃지 코드 — GitHub README에 붙여넣기</p>
+      <p className="text-sm text-[var(--text-sub)]">{t.badge.title}</p>
 
       {/* ── 옵션 ── */}
       <div className="flex flex-col gap-2.5">
-        {([
-          ['테마', THEME_OPTIONS, theme,  setTheme],
-          ['크기', SIZE_OPTIONS,  size,   setSize],
-          ['정렬', ALIGN_OPTIONS, align,  setAlign],
-        ] as const).map(([label, opts, val, setter]) => (
+        {OPTIONS.map(([label, opts, val, setter]) => (
           <div key={label} className="flex items-center gap-3">
-            <span className="text-xs text-[var(--text-sub)] w-7 shrink-0">{label}</span>
+            <span className="text-xs text-[var(--text-sub)] w-10 shrink-0">{label}</span>
             <div className="flex gap-1 flex-wrap">
-              {(opts as [string, string][]).map(([v, display]) => (
+              {opts.map(([v, display]) => (
                 <button
                   key={v}
-                  onClick={() => (setter as (x: string) => void)(v)}
+                  onClick={() => setter(v)}
                   className="px-3 py-1 rounded text-xs font-medium border transition-colors duration-150 cursor-pointer"
                   style={segBtn(val === v)}
                 >
@@ -100,12 +100,12 @@ export function BadgeCopy({ username }: { username: string }) {
             : { background: 'transparent', borderColor: 'var(--border)', color: 'var(--text-sub)' }
           }
         >
-          {copied ? '✓ 복사됨' : '복사'}
+          {copied ? t.badge.copied : t.badge.copy}
         </button>
       </div>
 
       <p className="text-xs text-[var(--text-sub)]">
-        ⚠️ GitHub location을 한국으로 설정한 유저 기준 백분위입니다.
+        {t.badge.warning}
       </p>
     </div>
   )

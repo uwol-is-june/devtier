@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { version } from "@/package.json";
+import { LangProvider } from "@/context/LangContext";
 
 export const metadata: Metadata = {
   title: "DevTier — GitHub 잔디로 측정하는 개발자 전투력",
@@ -22,10 +23,12 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full">
       <body className="min-h-full flex flex-col">
-        {children}
-        <footer className="flex items-center justify-center py-4 text-[10px] text-[#484f58]" style={{ background: '#000' }}>
-          <span>v{version}</span>
-        </footer>
+        <LangProvider>
+          {children}
+          <footer className="flex items-center justify-center py-4 text-[10px] text-[#484f58]" style={{ background: '#000' }}>
+            <span>v{version}</span>
+          </footer>
+        </LangProvider>
       </body>
     </html>
   );

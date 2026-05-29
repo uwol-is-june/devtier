@@ -8,6 +8,8 @@ import { TierIcon } from '@/components/TierIcon'
 import { LoginButton } from '@/components/LoginButton'
 import { LogoutButton } from '@/components/LogoutButton'
 import { RankingTable } from '@/components/RankingTable'
+import { LangToggle } from '@/components/LangToggle'
+import { useT } from '@/context/LangContext'
 
 const orbitron = Orbitron({
   subsets: ['latin'],
@@ -23,54 +25,20 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
 })
 
-const FEATURES = [
-  {
-    num: '01',
-    label: 'TIER_SYSTEM',
-    title: '6티어 × 4단계 시스템',
-    desc: '브론즈부터 챌린저까지, 각 티어는 1~4단계로 세분화. GitHub 잔디 데이터로 한국 개발자 전체와 실시간 비교.',
-    stat: '24',
-    statLabel: 'TOTAL RANKS',
-    accent: '#FF4655',
-  },
-  {
-    num: '02',
-    label: 'SCORE_ENGINE',
-    title: '전투력 알고리즘',
-    desc: '잔디 수, 스트릭, PR, 이슈, 레포 스타, 연도 커밋 등 9가지 지표를 정밀 공식으로 합산.',
-    stat: '9×',
-    statLabel: 'METRICS',
-    accent: '#7CFF5B',
-  },
-  {
-    num: '03',
-    label: 'BADGE_API',
-    title: 'README 뱃지',
-    desc: 'GitHub 프로필에 티어 뱃지를 달아 실력을 증명. 매주 자동 업데이트.',
-    stat: '<1S',
-    statLabel: 'RESPONSE',
-    accent: '#56C8D8',
-  },
+const FEATURES_META = [
+  { num: '01', label: 'TIER_SYSTEM',  stat: '24',  accent: '#FF4655' },
+  { num: '02', label: 'SCORE_ENGINE', stat: '9×',  accent: '#7CFF5B' },
+  { num: '03', label: 'BADGE_API',    stat: '<1S', accent: '#56C8D8' },
 ]
 
-const TIERS = [
-  { name: '챌린저', range: 'TOP 100명',     color: '#FF4655', width: '8%'  },
-  { name: '다이아',  range: '상위 1~5%',    color: '#56C8D8', width: '18%' },
-  { name: '플래티넘', range: '상위 5~15%',  color: '#5AC9A6', width: '34%' },
-  { name: '골드',   range: '상위 15~30%',   color: '#FFD700', width: '55%' },
-  { name: '실버',   range: '상위 30~50%',   color: '#C0C0C0', width: '76%' },
-  { name: '브론즈',  range: '상위 50~100%', color: '#CD7F32', width: '100%' },
+const TIERS_META = [
+  { key: 'challenger', color: '#FF4655', width: '8%'  },
+  { key: 'diamond',    color: '#56C8D8', width: '18%' },
+  { key: 'platinum',   color: '#5AC9A6', width: '34%' },
+  { key: 'gold',       color: '#FFD700', width: '55%' },
+  { key: 'silver',     color: '#C0C0C0', width: '76%' },
+  { key: 'bronze',     color: '#CD7F32', width: '100%' },
 ]
-
-
-const TIER_LABEL: Record<string, string> = {
-  challenger: '챌린저',
-  diamond:    '다이아',
-  platinum:   '플래티넘',
-  gold:       '골드',
-  silver:     '실버',
-  bronze:     '브론즈',
-}
 
 const TIER_COLOR: Record<string, string> = {
   challenger: '#FF4655',
@@ -99,9 +67,11 @@ type MyData = {
 }
 
 function MyTierCard({ data }: { data: MyData }) {
+  const { t, locale } = useT()
   const tierColor = TIER_COLOR[data.tier] ?? '#C0C0C0'
-  const tierLabel = TIER_LABEL[data.tier] ?? data.tier
+  const tierLabel = t.tier.labels[data.tier] ?? data.tier
   const fullTierLabel = data.tier_rank ? `${tierLabel} ${data.tier_rank}` : tierLabel
+  const localeStr = locale === 'ko' ? 'ko-KR' : 'en-US'
 
   return (
     <div style={{
@@ -141,14 +111,14 @@ function MyTierCard({ data }: { data: MyData }) {
           fontWeight: 900,
           color: tierColor,
           letterSpacing: '-0.02em',
-        }}>{data.score.toLocaleString('ko-KR')}</div>
+        }}>{data.score.toLocaleString(localeStr)}</div>
         <div style={{
           fontFamily: 'var(--font-orbitron), monospace',
           fontSize: '0.52rem',
           letterSpacing: '0.2em',
           color: 'rgba(255,255,255,0.3)',
           marginTop: '2px',
-        }}>전투력</div>
+        }}>{t.hero.combatPower}</div>
       </div>
       {data.percentile !== null && (
         <div style={{
@@ -161,7 +131,7 @@ function MyTierCard({ data }: { data: MyData }) {
           padding: '0.3rem 0.9rem',
           borderRadius: '100px',
         }}>
-          상위 {data.percentile.toFixed(1)}%
+          {t.hero.topPercent(data.percentile.toFixed(1))}
         </div>
       )}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.25rem' }}>
@@ -175,7 +145,7 @@ function MyTierCard({ data }: { data: MyData }) {
             textDecoration: 'none',
           }}
         >
-          자세히 보기 →
+          {t.hero.viewDetails}
         </a>
         <span style={{ color: 'rgba(255,255,255,0.15)' }}>|</span>
         <LogoutButton />
@@ -193,9 +163,12 @@ export default function HomeClient({
   ranking: RankingRow[]
   rankingTotal: number
 }) {
+  const { t, locale } = useT()
+  const localeStr = locale === 'ko' ? 'ko-KR' : 'en-US'
+
   const STATS = [
-    { key: 'INDEXED_USERS',  val: `${rankingTotal.toLocaleString('ko-KR')}+` },
-    { key: 'SCORE_METRICS',  val: '9 종'   },
+    { key: 'INDEXED_USERS',  val: `${rankingTotal.toLocaleString(localeStr)}+` },
+    { key: 'SCORE_METRICS',  val: t.system.scoreMetricsVal },
     { key: 'UPDATE_CYCLE',   val: 'WEEKLY' },
     { key: 'BADGE_LATENCY',  val: '<200ms' },
   ]
@@ -353,8 +326,9 @@ export default function HomeClient({
       <nav className="cyber-nav" aria-label="메인 네비게이션">
         <a href="/" className="nav-logo">DEVTIER</a>
         <ul className="nav-links">
-          <li><a href="#ranking" className="nav-link">RANKING</a></li>
-          <li><a href="#features" className="nav-link">FEATURES</a></li>
+          <li><a href="#ranking" className="nav-link">{t.nav.ranking}</a></li>
+          <li><a href="#features" className="nav-link">{t.nav.features}</a></li>
+          <li><LangToggle /></li>
         </ul>
       </nav>
 
@@ -394,7 +368,7 @@ export default function HomeClient({
           {/* status badge */}
           <div className="status-badge" style={{ animationDelay: '0.1s' }}>
             <span className="status-dot" />
-            SYSTEM ONLINE · 한국 개발자 전투력 측정
+            {t.hero.statusBadge}
           </div>
 
           {/* glitch title */}
@@ -415,9 +389,9 @@ export default function HomeClient({
               lineHeight: 1.6,
               margin: 0,
             }}>
-              GitHub 잔디 기반{' '}
-              <span style={{ color: '#7CFF5B', fontWeight: 600 }}>개발자 전투력 측정</span>{' '}
-              시스템
+              {t.hero.tagline}{' '}
+              <span style={{ color: '#7CFF5B', fontWeight: 600 }}>{t.hero.taglineHighlight}</span>{' '}
+              {t.hero.taglineSuffix}
             </p>
             <p style={{
               fontFamily: 'var(--font-orbitron), monospace',
@@ -426,7 +400,7 @@ export default function HomeClient({
               letterSpacing: '0.22em',
               marginTop: '0.6rem',
             }}>
-              한국 개발자 실시간 랭킹 · 티어 · 뱃지
+              {t.hero.subtitle}
             </p>
           </div>
 
@@ -445,7 +419,7 @@ export default function HomeClient({
                 }}
               >
                 <LoginButton />
-                <a href="#features" className="btn-outline">기능 보기</a>
+                <a href="#features" className="btn-outline">{t.hero.featuresBtn}</a>
               </div>
 
               {/* floating tier badge mockup */}
@@ -480,7 +454,7 @@ export default function HomeClient({
                     <div style={{
                       fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
                       color: 'rgba(255,255,255,0.65)', fontSize: '0.7rem', marginTop: '2px',
-                    }}>2,847점</div>
+                    }}>2,847{locale === 'ko' ? '점' : 'pts'}</div>
                   </div>
                   <div style={{
                     marginLeft: 'auto',
@@ -539,7 +513,7 @@ export default function HomeClient({
             color: 'rgba(124,255,91,0.45)',
             marginBottom: '1rem',
           }}>
-            CORE_FEATURES
+            {t.features.sectionLabel}
           </div>
           <h2 style={{
             fontFamily: 'var(--font-orbitron), monospace',
@@ -549,7 +523,7 @@ export default function HomeClient({
             letterSpacing: '0.04em',
             margin: 0,
           }}>
-            핵심 기능
+            {t.features.title}
           </h2>
           <div style={{
             width: '48px', height: '2px',
@@ -565,97 +539,100 @@ export default function HomeClient({
           maxWidth: '1100px',
           margin: '0 auto',
         }}>
-          {FEATURES.map((feat, i) => (
-            <div
-              key={feat.num}
-              className="feature-card"
-              ref={(el) => { cardRefs.current[i] = el }}
-              style={{
-                transform: cardTilts[i] || undefined,
-                transition: cardTilts[i]
-                  ? 'border-color 0.35s ease, box-shadow 0.35s ease'
-                  : undefined,
-              }}
-              onMouseMove={(e) => handleCardTilt(e, i)}
-              onMouseLeave={() => resetCardTilt(i)}
-            >
-              <div className="card-shine" />
+          {FEATURES_META.map((meta, i) => {
+            const feat = t.features.items[i]
+            return (
+              <div
+                key={meta.num}
+                className="feature-card"
+                ref={(el) => { cardRefs.current[i] = el }}
+                style={{
+                  transform: cardTilts[i] || undefined,
+                  transition: cardTilts[i]
+                    ? 'border-color 0.35s ease, box-shadow 0.35s ease'
+                    : undefined,
+                }}
+                onMouseMove={(e) => handleCardTilt(e, i)}
+                onMouseLeave={() => resetCardTilt(i)}
+              >
+                <div className="card-shine" />
 
-              <div style={{
-                fontFamily: 'var(--font-orbitron), monospace',
-                fontSize: '0.58rem',
-                letterSpacing: '0.2em',
-                color: feat.accent,
-                opacity: 0.7,
-                marginBottom: '1.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.6rem',
-              }}>
-                <span>{feat.num}</span>
-                <span style={{ flex: 1, height: '1px', background: `linear-gradient(90deg, ${feat.accent}44, transparent)` }} />
-                <span style={{ opacity: 0.7 }}>{feat.label}</span>
-              </div>
-
-              <div style={{
-                width: '44px', height: '44px',
-                borderRadius: '8px',
-                border: `1px solid ${feat.accent}44`,
-                background: `${feat.accent}0d`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: '1.25rem',
-                fontSize: '20px',
-              }}>
-                {i === 0 ? '◈' : i === 1 ? '⬡' : '◉'}
-              </div>
-
-              <h3 style={{
-                fontFamily: 'var(--font-orbitron), monospace',
-                fontSize: '1rem',
-                fontWeight: 700,
-                color: '#e6edf3',
-                letterSpacing: '0.04em',
-                margin: '0 0 0.75rem',
-              }}>
-                {feat.title}
-              </h3>
-
-              <p style={{
-                fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-                fontSize: '0.875rem',
-                color: 'rgba(255,255,255,0.5)',
-                lineHeight: 1.7,
-                margin: '0 0 1.5rem',
-              }}>
-                {feat.desc}
-              </p>
-
-              <div style={{
-                marginTop: 'auto',
-                paddingTop: '1.25rem',
-                borderTop: '1px solid rgba(255,255,255,0.06)',
-                display: 'flex', alignItems: 'baseline', gap: '0.5rem',
-              }}>
-                <span style={{
+                <div style={{
                   fontFamily: 'var(--font-orbitron), monospace',
-                  fontSize: '1.6rem',
-                  fontWeight: 900,
-                  color: feat.accent,
-                  letterSpacing: '-0.02em',
+                  fontSize: '0.58rem',
+                  letterSpacing: '0.2em',
+                  color: meta.accent,
+                  opacity: 0.7,
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
                 }}>
-                  {feat.stat}
-                </span>
-                <span style={{
+                  <span>{meta.num}</span>
+                  <span style={{ flex: 1, height: '1px', background: `linear-gradient(90deg, ${meta.accent}44, transparent)` }} />
+                  <span style={{ opacity: 0.7 }}>{meta.label}</span>
+                </div>
+
+                <div style={{
+                  width: '44px', height: '44px',
+                  borderRadius: '8px',
+                  border: `1px solid ${meta.accent}44`,
+                  background: `${meta.accent}0d`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginBottom: '1.25rem',
+                  fontSize: '20px',
+                }}>
+                  {i === 0 ? '◈' : i === 1 ? '⬡' : '◉'}
+                </div>
+
+                <h3 style={{
                   fontFamily: 'var(--font-orbitron), monospace',
-                  fontSize: '0.55rem',
-                  letterSpacing: '0.18em',
-                  color: 'rgba(255,255,255,0.3)',
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  color: '#e6edf3',
+                  letterSpacing: '0.04em',
+                  margin: '0 0 0.75rem',
                 }}>
-                  {feat.statLabel}
-                </span>
+                  {feat.title}
+                </h3>
+
+                <p style={{
+                  fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
+                  fontSize: '0.875rem',
+                  color: 'rgba(255,255,255,0.5)',
+                  lineHeight: 1.7,
+                  margin: '0 0 1.5rem',
+                }}>
+                  {feat.desc}
+                </p>
+
+                <div style={{
+                  marginTop: 'auto',
+                  paddingTop: '1.25rem',
+                  borderTop: '1px solid rgba(255,255,255,0.06)',
+                  display: 'flex', alignItems: 'baseline', gap: '0.5rem',
+                }}>
+                  <span style={{
+                    fontFamily: 'var(--font-orbitron), monospace',
+                    fontSize: '1.6rem',
+                    fontWeight: 900,
+                    color: meta.accent,
+                    letterSpacing: '-0.02em',
+                  }}>
+                    {meta.stat}
+                  </span>
+                  <span style={{
+                    fontFamily: 'var(--font-orbitron), monospace',
+                    fontSize: '0.55rem',
+                    letterSpacing: '0.18em',
+                    color: 'rgba(255,255,255,0.3)',
+                  }}>
+                    {feat.statLabel}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </section>
 
@@ -690,7 +667,7 @@ export default function HomeClient({
               letterSpacing: '0.28em',
               color: 'rgba(124,255,91,0.45)',
             }}>
-              SYSTEM_STATUS
+              {t.system.label}
             </div>
 
             <div className="section-anim-child">
@@ -703,7 +680,7 @@ export default function HomeClient({
                 margin: '0 0 0.75rem',
                 lineHeight: 1.2,
               }}>
-                실시간 운영 현황
+                {t.system.title}
               </h2>
               <p style={{
                 fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
@@ -711,16 +688,16 @@ export default function HomeClient({
                 color: 'rgba(255,255,255,0.48)',
                 lineHeight: 1.75,
                 margin: 0,
+                whiteSpace: 'pre-line',
               }}>
-                한국 개발자 {rankingTotal.toLocaleString('ko-KR')}+명의 GitHub 데이터를 주 1회 수집·분석합니다.
-                전투력 점수, 티어, 백분위가 자동으로 갱신됩니다.
+                {t.system.desc(rankingTotal.toLocaleString(localeStr))}
               </p>
             </div>
 
             <div className="stat-panel section-anim-child">
               <div className="stat-panel-header">
                 <span className="status-dot" />
-                <span className="stat-panel-label">SYS_METRICS</span>
+                <span className="stat-panel-label">{t.system.panelLabel}</span>
               </div>
               {STATS.map((s) => (
                 <div className="stat-row" key={s.key}>
@@ -739,21 +716,21 @@ export default function HomeClient({
               letterSpacing: '0.28em',
               color: 'rgba(124,255,91,0.45)',
             }}>
-              TIER_DISTRIBUTION
+              {t.system.tierDistLabel}
             </div>
 
             <div className="stat-panel section-anim-child">
               <div className="stat-panel-header">
                 <span className="status-dot" />
-                <span className="stat-panel-label">TIER_LADDER</span>
+                <span className="stat-panel-label">{t.system.tierLadderLabel}</span>
               </div>
-              {TIERS.map((tier) => (
-                <div className="tier-row" key={tier.name}>
+              {TIERS_META.map((tier) => (
+                <div className="tier-row" key={tier.key}>
                   <span
                     className="tier-name"
                     style={{ color: tier.color, textShadow: `0 0 8px ${tier.color}66` }}
                   >
-                    {tier.name}
+                    {t.tier.labels[tier.key]}
                   </span>
                   <div className="tier-bar-track">
                     <div
@@ -765,7 +742,7 @@ export default function HomeClient({
                       } as React.CSSProperties}
                     />
                   </div>
-                  <span className="tier-range">{tier.range}</span>
+                  <span className="tier-range">{t.tier.ranges[tier.key]}</span>
                 </div>
               ))}
             </div>
@@ -783,14 +760,14 @@ export default function HomeClient({
                 color: 'rgba(255,255,255,0.35)',
               }}
             >
-              <span style={{ color: 'rgba(124,255,91,0.6)', fontSize: '0.58rem', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>SCORE_FORMULA</span>
-              <span style={{ color: '#79C0FF' }}>잔디 수</span>       × 1{'\n'}
-              + <span style={{ color: '#79C0FF' }}>현재 스트릭</span> × 3{'\n'}
-              + <span style={{ color: '#79C0FF' }}>최대 스트릭</span> × 2{'\n'}
-              + <span style={{ color: '#FFA857' }}>log₂</span>(<span style={{ color: '#79C0FF' }}>스타 + 1</span>) × 10{'\n'}
-              + <span style={{ color: '#79C0FF' }}>연도 커밋</span>   × 0.5{'\n'}
-              + <span style={{ color: '#79C0FF' }}>총 PR</span>       × 3{'\n'}
-              + <span style={{ color: '#79C0FF' }}>총 이슈</span>     × 1
+              <span style={{ color: 'rgba(124,255,91,0.6)', fontSize: '0.58rem', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>{t.system.formulaLabel}</span>
+              <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.grass}</span>       × 1{'\n'}
+              + <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.currentStreak}</span> × 3{'\n'}
+              + <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.maxStreak}</span> × 2{'\n'}
+              + <span style={{ color: '#FFA857' }}>log₂</span>(<span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.star}</span>) × 10{'\n'}
+              + <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.yearCommit}</span>   × 0.5{'\n'}
+              + <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.pr}</span>       × 3{'\n'}
+              + <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.issue}</span>     × 1
             </div>
           </div>
         </div>
@@ -823,7 +800,7 @@ export default function HomeClient({
               color: 'rgba(124,255,91,0.45)',
               marginBottom: '1rem',
             }}>
-              LEADERBOARD
+              {t.ranking.label}
             </div>
             <h2 className="section-anim-child" style={{
               fontFamily: 'var(--font-orbitron), monospace',
@@ -833,7 +810,7 @@ export default function HomeClient({
               letterSpacing: '0.04em',
               margin: 0,
             }}>
-              전체 랭킹
+              {t.ranking.title}
               {rankingTotal > 0 && (
                 <span style={{
                   fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
@@ -843,7 +820,7 @@ export default function HomeClient({
                   marginLeft: '1rem',
                   letterSpacing: '0.04em',
                 }}>
-                  총 {rankingTotal.toLocaleString('ko-KR')}명
+                  {t.ranking.totalUsers(rankingTotal.toLocaleString(localeStr))}
                 </span>
               )}
             </h2>
@@ -902,7 +879,7 @@ export default function HomeClient({
             letterSpacing: '0.28em',
             color: 'rgba(124,255,91,0.45)',
           }}>
-            GET_STARTED
+            {t.cta.label}
           </div>
 
           <div className="section-anim-child">
@@ -915,10 +892,10 @@ export default function HomeClient({
               margin: '0 0 0.5rem',
               lineHeight: 1.1,
             }}>
-              당신의 <span style={{
+              {t.cta.headingPrefix}{' '}<span style={{
                 color: '#7CFF5B',
                 textShadow: '0 0 20px rgba(124,255,91,0.5), 0 0 40px rgba(124,255,91,0.2)',
-              }}>RANK</span>는?
+              }}>{t.cta.headingHighlight}</span>{t.cta.headingSuffix}
             </h2>
             <p style={{
               fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
@@ -927,7 +904,7 @@ export default function HomeClient({
               margin: 0,
               lineHeight: 1.7,
             }}>
-              GitHub 계정으로 로그인하면 전투력을 측정하고, 한국 개발자들과 순위를 비교할 수 있어요.
+              {t.cta.desc}
             </p>
           </div>
 
@@ -969,13 +946,13 @@ export default function HomeClient({
           <div className="section-anim-child" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
             {myData ? (
               <>
-                <a href={`/result/${myData.github_id}`} className="btn-primary">내 결과 자세히 보기 →</a>
-                <a href="#ranking" className="btn-outline">랭킹 확인하기</a>
+                <a href={`/result/${myData.github_id}`} className="btn-primary">{t.cta.viewResult}</a>
+                <a href="#ranking" className="btn-outline">{t.cta.viewRanking}</a>
               </>
             ) : (
               <>
                 <LoginButton />
-                <a href="#ranking" className="btn-outline">랭킹 확인하기</a>
+                <a href="#ranking" className="btn-outline">{t.cta.viewRanking}</a>
               </>
             )}
           </div>
@@ -987,7 +964,7 @@ export default function HomeClient({
             color: 'rgba(255,255,255,0.2)',
             margin: 0,
           }}>
-            GitHub location 한국 설정 유저 기준 백분위 · 주 1회 자동 업데이트
+            {t.cta.finePrint}
           </p>
         </div>
       </section>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useT } from '@/context/LangContext'
 
 interface ShareButtonsProps {
   username: string
@@ -24,10 +25,13 @@ declare global {
 export function ShareButtons({ username, score, tierLabel, percentile, isOwn = false }: ShareButtonsProps & { isOwn?: boolean }) {
   const [copied, setCopied] = useState(false)
   const [kakaoReady, setKakaoReady] = useState(false)
+  const { t, locale } = useT()
+  const localeStr = locale === 'ko' ? 'ko-KR' : 'en-US'
 
   const pageUrl = `https://devtier-brown.vercel.app/result/${username}`
-  const subject = isOwn ? '나의' : `${username}의`
-  const shareText = `${subject} GitHub 개발자 전투력은 ${tierLabel}! 💪 전투력 ${score.toLocaleString('ko-KR')}점${percentile ? ` (한국 개발자 상위 ${percentile.toFixed(1)}%)` : ''} — DevTier에서 내 랭킹 확인해봐`
+  const subject = isOwn ? t.share.ownSubject : t.share.otherSubject(username)
+  const percentileStr = percentile ? percentile.toFixed(1) : null
+  const shareText = t.share.shareText(subject, tierLabel, score.toLocaleString(localeStr), percentileStr)
   const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_APP_KEY
 
   useEffect(() => {
@@ -73,7 +77,7 @@ export function ShareButtons({ username, score, tierLabel, percentile, isOwn = f
 
   return (
     <div className="w-full max-w-lg flex flex-col gap-3">
-      <p className="text-sm text-[var(--text-sub)]">결과 공유하기</p>
+      <p className="text-sm text-[var(--text-sub)]">{t.share.title}</p>
       <div className="flex gap-2 flex-wrap">
         {/* 링크 복사 */}
         <button
@@ -85,7 +89,7 @@ export function ShareButtons({ username, score, tierLabel, percentile, isOwn = f
           }
         >
           <LinkIcon />
-          {copied ? '✓ 링크 복사됨' : '링크 복사'}
+          {copied ? t.share.linkCopied : t.share.copyLink}
         </button>
 
         {/* X(트위터) 공유 */}
@@ -95,7 +99,7 @@ export function ShareButtons({ username, score, tierLabel, percentile, isOwn = f
           style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-sub)' }}
         >
           <XIcon />
-          X 공유
+          {t.share.xShare}
         </button>
 
         {/* 카카오톡 공유 — 앱키 없으면 숨김 */}
@@ -106,7 +110,7 @@ export function ShareButtons({ username, score, tierLabel, percentile, isOwn = f
             style={{ background: '#FEE500', borderColor: '#FEE500', color: '#191919' }}
           >
             <KakaoIcon />
-            카카오톡 공유
+            {t.share.kakaoShare}
           </button>
         )}
       </div>

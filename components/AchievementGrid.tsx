@@ -1,16 +1,9 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { useT } from '@/context/LangContext'
 
 type Category = 'all' | 'activity' | 'tier' | 'pattern' | 'social'
-
-const CATEGORY_LABELS: Record<Category, string> = {
-  all:      '전체',
-  activity: '잔디',
-  tier:     '티어',
-  pattern:  '패턴',
-  social:   '소셜',
-}
 
 const RARITY_COLOR: Record<string, string> = {
   common:    '#8b949e',
@@ -41,6 +34,7 @@ type AchievementItem = {
 function AchievementTooltip({ description, percentage }: { description: string; percentage?: number }) {
   const [visible, setVisible] = useState(false)
   const ref = useRef<HTMLSpanElement>(null)
+  const { t } = useT()
 
   useEffect(() => {
     if (!visible) return
@@ -66,7 +60,7 @@ function AchievementTooltip({ description, percentage }: { description: string; 
         onClick={() => setVisible(v => !v)}
         className="flex items-center justify-center w-3.5 h-3.5 rounded-full text-[9px] font-bold leading-none cursor-pointer select-none"
         style={{ background: 'var(--border)', color: 'var(--text-sub)' }}
-        aria-label="설명 보기"
+        aria-label={t.achievements.tooltipLabel}
       >
         ?
       </button>
@@ -83,7 +77,7 @@ function AchievementTooltip({ description, percentage }: { description: string; 
           <span className="block">{description}</span>
           {percentage !== undefined && (
             <span className="block mt-1" style={{ color: '#8b949e' }}>
-              전체 유저의 {percentage.toFixed(1)}%가 보유
+              {t.achievements.heldBy(percentage.toFixed(1))}
             </span>
           )}
           <span
@@ -108,6 +102,7 @@ function AchievementCard({
   item: AchievementItem
   percentage?: number
 }) {
+  const { t, locale } = useT()
   const color = RARITY_COLOR[item.rarity] ?? '#8b949e'
   const progressPct =
     item.progress
@@ -139,7 +134,7 @@ function AchievementCard({
         </div>
         {item.unlocked_at && (
           <span className="text-xs" style={{ color: '#8b949e' }}>
-            {new Date(item.unlocked_at).toLocaleDateString('ko-KR')} 달성
+            {t.achievements.achieved(new Date(item.unlocked_at).toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US'))}
           </span>
         )}
       </div>
@@ -191,6 +186,7 @@ export function AchievementGrid({ username }: { username: string }) {
   const [statsMap, setStatsMap] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<Category>('all')
+  const { t } = useT()
 
   useEffect(() => {
     Promise.all([
@@ -214,7 +210,7 @@ export function AchievementGrid({ username }: { username: string }) {
   return (
     <section className="w-full max-w-lg mb-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xs text-[var(--text-sub)] uppercase tracking-widest">도전과제</h2>
+        <h2 className="text-xs text-[var(--text-sub)] uppercase tracking-widest">{t.achievements.title}</h2>
         {!loading && (
           <span className="text-xs font-mono" style={{ color: '#8b949e' }}>
             {unlockedCount} / {total}
@@ -224,7 +220,7 @@ export function AchievementGrid({ username }: { username: string }) {
 
       {/* 카테고리 탭 */}
       <div className="flex gap-1.5 mb-4 flex-wrap">
-        {(Object.keys(CATEGORY_LABELS) as Category[]).map(cat => (
+        {(Object.keys(t.achievements.categories) as Category[]).map(cat => (
           <button
             key={cat}
             type="button"
@@ -236,7 +232,7 @@ export function AchievementGrid({ username }: { username: string }) {
                 : { background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-sub)' }
             }
           >
-            {CATEGORY_LABELS[cat]}
+            {t.achievements.categories[cat]}
           </button>
         ))}
       </div>
@@ -253,7 +249,7 @@ export function AchievementGrid({ username }: { username: string }) {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <p className="text-sm text-[var(--text-sub)] text-center py-8">해당 카테고리 도전과제가 없습니다.</p>
+        <p className="text-sm text-[var(--text-sub)] text-center py-8">{t.achievements.empty}</p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {filtered.map(item => (

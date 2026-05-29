@@ -2,11 +2,13 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useT } from '@/context/LangContext'
 
 export function SearchForm() {
   const router = useRouter()
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
+  const { t } = useT()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -22,7 +24,7 @@ export function SearchForm() {
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="GitHub 아이디 입력"
+        placeholder={t.search.placeholder}
         autoComplete="off"
         spellCheck={false}
         className="
@@ -50,7 +52,7 @@ export function SearchForm() {
           cursor-pointer
         "
       >
-        {loading ? '조회 중…' : '전투력 측정'}
+        {loading ? t.search.loading : t.search.button}
       </button>
     </form>
   )

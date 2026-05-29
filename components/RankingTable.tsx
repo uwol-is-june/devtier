@@ -2,15 +2,7 @@
 
 import { useState } from 'react'
 import { TierIcon } from '@/components/TierIcon'
-
-const TIER_LABEL: Record<string, string> = {
-  challenger: '챌린저',
-  diamond:    '다이아',
-  platinum:   '플래티넘',
-  gold:       '골드',
-  silver:     '실버',
-  bronze:     '브론즈',
-}
+import { useT } from '@/context/LangContext'
 
 const TIER_COLOR: Record<string, string> = {
   challenger: '#FF4655',
@@ -54,6 +46,8 @@ export function RankingTable({ initialRows, myData, total }: Props) {
   const [rows, setRows] = useState<RankingUser[]>(initialRows)
   const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
+  const { t, locale } = useT()
+  const localeStr = locale === 'ko' ? 'ko-KR' : 'en-US'
 
   const myGithubId = myData?.github_id
 
@@ -74,7 +68,7 @@ export function RankingTable({ initialRows, myData, total }: Props) {
   if (rows.length === 0) {
     return (
       <div className="text-center py-16 text-[var(--text-sub)] text-sm">
-        아직 데이터가 없습니다. 배치를 실행하거나 아이디를 검색해보세요.
+        {t.rankingTable.empty}
       </div>
     )
   }
@@ -105,15 +99,15 @@ export function RankingTable({ initialRows, myData, total }: Props) {
             >
               <th className="px-4 py-3.5 w-12">#</th>
               <th className="px-4 py-3.5">GitHub ID</th>
-              <th className="px-4 py-3.5">티어</th>
-              <th className="px-4 py-3.5 text-right">전투력</th>
-              <th className="px-4 py-3.5 text-right">백분위</th>
+              <th className="px-4 py-3.5">{t.rankingTable.tierHeader}</th>
+              <th className="px-4 py-3.5 text-right">{t.rankingTable.combatHeader}</th>
+              <th className="px-4 py-3.5 text-right">{t.rankingTable.percentileHeader}</th>
             </tr>
           </thead>
           <tbody>
             {myNotInList && (() => {
               const myTierColor = TIER_COLOR[myData.tier] ?? '#C0C0C0'
-              const myTierLabel = TIER_LABEL[myData.tier] ?? myData.tier
+              const myTierLabel = t.tier.labels[myData.tier] ?? myData.tier
               const myRankLabel = myData.tier_rank ? `${myTierLabel} ${myData.tier_rank}` : myTierLabel
               return (
                 <>
@@ -141,14 +135,14 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                             border: '1px solid rgba(124,255,91,0.4)',
                           }}
                         >
-                          나
+                          {t.rankingTable.me}
                         </span>
                         <a
                           href={`https://github.com/${myData.github_id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[var(--text-sub)] hover:text-[var(--text)] transition-colors"
-                          title="GitHub 프로필 열기"
+                          title={t.rankingTable.ghProfile}
                         >
                           {GH_ICON}
                         </a>
@@ -164,13 +158,13 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                       className="px-4 py-3.5 text-right"
                       style={{ fontFamily: 'var(--font-orbitron), monospace', fontWeight: 700, color: '#7CFF5B' }}
                     >
-                      {myData.score.toLocaleString('ko-KR')}
+                      {myData.score.toLocaleString(localeStr)}
                     </td>
                     <td
                       className="px-4 py-3.5 text-right"
                       style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.75rem', color: 'rgba(255,255,255,0.28)' }}
                     >
-                      {myData.percentile != null ? `상위 ${myData.percentile.toFixed(1)}%` : '-'}
+                      {myData.percentile != null ? t.rankingTable.topPercent(myData.percentile.toFixed(1)) : '-'}
                     </td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid var(--border)' }}>
@@ -183,7 +177,7 @@ export function RankingTable({ initialRows, myData, total }: Props) {
             })()}
             {rows.map((user, i) => {
               const tierColor = TIER_COLOR[user.tier] ?? '#C0C0C0'
-              const tierLabel = TIER_LABEL[user.tier] ?? user.tier
+              const tierLabel = t.tier.labels[user.tier] ?? user.tier
               const rankLabel = user.tier_rank ? `${tierLabel} ${user.tier_rank}` : tierLabel
               const isMe = myGithubId === user.github_id
 
@@ -223,7 +217,7 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                             border: '1px solid rgba(124,255,91,0.4)',
                           }}
                         >
-                          나
+                          {t.rankingTable.me}
                         </span>
                       )}
                       <a
@@ -231,7 +225,7 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[var(--text-sub)] hover:text-[var(--text)] transition-colors"
-                        title="GitHub 프로필 열기"
+                        title={t.rankingTable.ghProfile}
                       >
                         {GH_ICON}
                       </a>
@@ -249,13 +243,13 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                     className="px-4 py-3.5 text-right"
                     style={{ fontFamily: 'var(--font-orbitron), monospace', fontWeight: 700, color: '#7CFF5B' }}
                   >
-                    {user.score.toLocaleString('ko-KR')}
+                    {user.score.toLocaleString(localeStr)}
                   </td>
                   <td
                     className="px-4 py-3.5 text-right"
                     style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.75rem', color: 'rgba(255,255,255,0.28)' }}
                   >
-                    {user.percentile != null ? `상위 ${user.percentile.toFixed(1)}%` : '-'}
+                    {user.percentile != null ? t.rankingTable.topPercent(user.percentile.toFixed(1)) : '-'}
                   </td>
                 </tr>
               )
@@ -279,12 +273,12 @@ export function RankingTable({ initialRows, myData, total }: Props) {
                 <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 12a9 9 0 11-6.219-8.56" />
                 </svg>
-                불러오는 중...
+                {t.rankingTable.loading}
               </>
             ) : expanded ? (
-              '접기 ↑'
+              t.rankingTable.collapse
             ) : (
-              '펼쳐보기'
+              t.rankingTable.expand
             )}
           </button>
         </div>

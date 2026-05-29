@@ -13,6 +13,8 @@ import { AchievementGrid } from '@/components/AchievementGrid'
 import { StatTooltip } from '@/components/StatTooltip'
 import { ScoreHistoryChart } from '@/components/ScoreHistoryChart'
 import { WeaknessRadarChart } from '@/components/WeaknessRadarChart'
+import { LangToggle } from '@/components/LangToggle'
+import { useT } from '@/context/LangContext'
 import type { ScoreData, WeaknessPercentile } from '@/lib/getScoreData'
 
 const orbitron = Orbitron({
@@ -29,15 +31,6 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
 })
 
-const TIER_LABEL: Record<string, string> = {
-  challenger: '챌린저',
-  diamond:    '다이아',
-  platinum:   '플래티넘',
-  gold:       '골드',
-  silver:     '실버',
-  bronze:     '브론즈',
-}
-
 const TIER_COLOR: Record<string, string> = {
   challenger: '#FF4655',
   diamond:    '#56C8D8',
@@ -45,6 +38,16 @@ const TIER_COLOR: Record<string, string> = {
   gold:       '#FFD700',
   silver:     '#C0C0C0',
   bronze:     '#CD7F32',
+}
+
+// next_tier_label is stored as Korean in DB — map back to tier key for translation
+const KO_TO_TIER_KEY: Record<string, string> = {
+  '챌린저': 'challenger',
+  '다이아':  'diamond',
+  '플래티넘': 'platinum',
+  '골드':   'gold',
+  '실버':   'silver',
+  '브론즈':  'bronze',
 }
 
 type Props = {
@@ -57,6 +60,8 @@ type Props = {
 export function ResultClient({ username, data, loggedInId, weaknessData }: Props) {
   const rootClass = `${orbitron.variable} ${spaceGrotesk.variable}`
   const [activeTab, setActiveTab] = useState<'stats' | 'achievements'>('stats')
+  const { t, locale } = useT()
+  const localeStr = locale === 'ko' ? 'ko-KR' : 'en-US'
 
   if (!data) {
     return (
@@ -68,6 +73,9 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
         <ParticleCanvas style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none' }} />
         <nav className="cyber-nav">
           <a href="/" className="nav-logo">DEVTIER</a>
+          <ul className="nav-links">
+            <li><LangToggle /></li>
+          </ul>
         </nav>
         <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', padding: '2rem' }}>
           <div className="glitch-wrap" style={{ marginBottom: '1.5rem' }}>
@@ -85,30 +93,30 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
           </p>
           <p style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif', fontSize: '0.9rem', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
             <span style={{ color: '#7CFF5B', fontFamily: 'Courier New, monospace' }}>{username}</span>
-            {' '}— GitHub 아이디를 확인해주세요.
+            {' '}{t.result.notFoundSuffix}
           </p>
-          <a href="/" className="btn-primary">← BACK TO HOME</a>
+          <a href="/" className="btn-primary">{t.result.backToHome}</a>
         </div>
       </div>
     )
   }
 
   const tierColor = TIER_COLOR[data.tier] ?? '#C0C0C0'
-  const tierLabel = TIER_LABEL[data.tier] ?? data.tier
+  const tierLabel = t.tier.labels[data.tier] ?? data.tier
   const fullTierLabel = data.tier_rank ? `${tierLabel} ${data.tier_rank}` : tierLabel
   const isOwn = loggedInId === data.github_id
 
   const currentYear = new Date().getFullYear()
   const stats = [
-    { key: 'TOTAL_CONTRIBUTIONS',  label: '총 잔디 수',       value: data.details.total_contributions.toLocaleString('ko-KR'),  tooltip: '최근 1년(365일) GitHub contribution 총합. 전투력 점수에 ×1 가중치.' },
-    { key: 'CURRENT_STREAK',       label: '현재 스트릭',      value: `${data.details.current_streak}일`,                        tooltip: '오늘 기준 연속으로 커밋한 날수. 가중치 ×3으로 모든 지표 중 가장 높음.' },
-    { key: 'LONGEST_STREAK',       label: '최대 스트릭',      value: `${data.details.longest_streak}일`,                        tooltip: '역대 최장 연속 커밋 기록. 가중치 ×2.' },
-    { key: 'CONTRIBUTION_DENSITY', label: '잔디 밀도',        value: `${(data.details.contribution_density * 100).toFixed(1)}%`, tooltip: '365일 중 커밋한 날의 비율 (0~100%). 가중치 ×100.' },
-    { key: 'PEAK_INTENSITY',       label: '피크 강도',        value: `${data.details.peak_intensity}/일`,                       tooltip: '하루에 가장 많이 커밋한 횟수. 가중치 ×0.5.' },
-    { key: 'TOTAL_STARS',          label: '레포 스타',        value: data.details.total_stars.toLocaleString('ko-KR'),           tooltip: '본인 소유 레포 스타 합계 (최대 100개 레포). log2(n+1)×10 스케일.' },
-    { key: 'CURRENT_YEAR_COMMITS', label: `${currentYear}년 커밋`, value: `${data.details.current_year_commits.toLocaleString('ko-KR')}회`, tooltip: `${currentYear}년 1월 1일부터 현재까지의 커밋 수. 가중치 ×0.5.` },
-    { key: 'TOTAL_PRS',            label: '총 PR',            value: `${data.details.total_prs.toLocaleString('ko-KR')}개`,     tooltip: '최근 1년 Pull Request 수. 커밋 대비 고가치 지표, 가중치 ×3.' },
-    { key: 'TOTAL_ISSUES',         label: '총 이슈',          value: `${data.details.total_issues.toLocaleString('ko-KR')}개`,  tooltip: '최근 1년 Issue 수. 오픈소스 참여 지표, 가중치 ×1.' },
+    { key: 'TOTAL_CONTRIBUTIONS',  label: t.stats.total_contributions.label(),         value: data.details.total_contributions.toLocaleString(localeStr),  tooltip: t.stats.total_contributions.tooltip() },
+    { key: 'CURRENT_STREAK',       label: t.stats.current_streak.label(),               value: locale === 'ko' ? `${data.details.current_streak}일` : `${data.details.current_streak}d`,         tooltip: t.stats.current_streak.tooltip() },
+    { key: 'LONGEST_STREAK',       label: t.stats.longest_streak.label(),               value: locale === 'ko' ? `${data.details.longest_streak}일` : `${data.details.longest_streak}d`,         tooltip: t.stats.longest_streak.tooltip() },
+    { key: 'CONTRIBUTION_DENSITY', label: t.stats.contribution_density.label(),         value: `${(data.details.contribution_density * 100).toFixed(1)}%`,  tooltip: t.stats.contribution_density.tooltip() },
+    { key: 'PEAK_INTENSITY',       label: t.stats.peak_intensity.label(),               value: locale === 'ko' ? `${data.details.peak_intensity}/일` : `${data.details.peak_intensity}/day`,      tooltip: t.stats.peak_intensity.tooltip() },
+    { key: 'TOTAL_STARS',          label: t.stats.total_stars.label(),                  value: data.details.total_stars.toLocaleString(localeStr),           tooltip: t.stats.total_stars.tooltip() },
+    { key: 'CURRENT_YEAR_COMMITS', label: t.stats.current_year_commits.label(currentYear), value: locale === 'ko' ? `${data.details.current_year_commits.toLocaleString(localeStr)}회` : `${data.details.current_year_commits.toLocaleString(localeStr)}`, tooltip: t.stats.current_year_commits.tooltip(currentYear) },
+    { key: 'TOTAL_PRS',            label: t.stats.total_prs.label(),                    value: locale === 'ko' ? `${data.details.total_prs.toLocaleString(localeStr)}개` : `${data.details.total_prs.toLocaleString(localeStr)}`, tooltip: t.stats.total_prs.tooltip() },
+    { key: 'TOTAL_ISSUES',         label: t.stats.total_issues.label(),                 value: locale === 'ko' ? `${data.details.total_issues.toLocaleString(localeStr)}개` : `${data.details.total_issues.toLocaleString(localeStr)}`, tooltip: t.stats.total_issues.tooltip() },
   ]
 
   const LANG_COLORS = ['#7CFF5B', '#56C8D8', '#FFD700', '#FF4655', '#5AC9A6']
@@ -135,6 +143,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
               {data.github_id}
             </a>
           </li>
+          <li><LangToggle /></li>
         </ul>
       </nav>
 
@@ -174,7 +183,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
 
           {data.tier !== 'challenger' && data.tier_rank && (
             <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', marginTop: '0.3rem' }}>
-              RANK {data.tier_rank} / 4 &nbsp;·&nbsp; 1이 최고 등급
+              RANK {data.tier_rank} / 4 &nbsp;·&nbsp; {t.result.rankInfo}
             </div>
           )}
 
@@ -196,17 +205,20 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
 
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.52rem', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.3)', marginBottom: '0.5rem' }}>
-              COMBAT POWER
+              {t.result.combatPower}
             </div>
             <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: 'clamp(2.4rem, 8vw, 3.8rem)', fontWeight: 900, color: tierColor, textShadow: `0 0 20px ${tierColor}66`, letterSpacing: '-0.02em' }}>
               <ScoreCounter target={data.score} />
             </div>
             <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.52rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.3)', marginTop: '0.3rem' }}>
-              점
+              {t.result.points}
             </div>
-            {data.next_tier_gap !== null && (
+            {data.next_tier_gap !== null && data.next_tier_label && (
               <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.5rem' }}>
-                ▲ {data.next_tier_label}까지 {data.next_tier_gap.toLocaleString('ko-KR')}점
+                {t.result.nextTier(
+                  t.tier.labels[KO_TO_TIER_KEY[data.next_tier_label] ?? ''] ?? data.next_tier_label,
+                  data.next_tier_gap.toLocaleString(localeStr)
+                )}
               </div>
             )}
           </div>
@@ -217,10 +229,10 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
               style={{ borderColor: `${tierColor}44`, background: `${tierColor}0a`, color: tierColor }}
             >
               <span className="status-dot" style={{ background: tierColor, animation: 'none', boxShadow: `0 0 6px ${tierColor}` }} />
-              상위 {data.percentile.toFixed(1)}%
+              {t.result.topPercent(data.percentile.toFixed(1))}
               {data.total_users !== null && (
                 <span style={{ opacity: 0.5, fontSize: '0.5rem' }}>
-                  {' '}(총 {data.total_users.toLocaleString('ko-KR')}명)
+                  {' '}({t.result.totalUsers(data.total_users.toLocaleString(localeStr))})
                 </span>
               )}
             </div>
@@ -231,7 +243,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
         <div className="stat-panel">
           <div className="stat-panel-header" style={{ borderBottom: 'none', marginBottom: 0, paddingBottom: 0 }}>
             {(['stats', 'achievements'] as const).map((tab) => {
-              const label = tab === 'stats' ? 'COMBAT_STATS' : 'ACHIEVEMENTS'
+              const label = tab === 'stats' ? t.result.tabs.stats : t.result.tabs.achievements
               const isActive = activeTab === tab
               return (
                 <button
@@ -260,7 +272,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
             <>
               {stats.map(stat => (
                 <div key={stat.key} className="stat-row">
-                  <div className="stat-key">{stat.key} <StatTooltip text={stat.tooltip} /></div>
+                  <div className="stat-key">{stat.label} <StatTooltip text={stat.tooltip} /></div>
                   <div className="stat-val">{stat.value}</div>
                 </div>
               ))}
@@ -306,7 +318,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
               <span className="t-dot t-dot-r" />
               <span className="t-dot t-dot-y" />
               <span className="t-dot t-dot-g" />
-              <span className="terminal-title">badge.md — README 뱃지</span>
+              <span className="terminal-title">{t.result.badgeTerminalTitle}</span>
             </div>
             <div style={{ padding: '1.5rem' }}>
               <BadgeCopy username={data.github_id} />
