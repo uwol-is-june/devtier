@@ -4,6 +4,7 @@ import { fetchContributions } from '@/lib/github'
 import { calcScore } from '@/lib/score'
 
 const DB_CHUNK = 1000
+const CONCURRENCY = 3
 const GITHUB_DELAY_MS = 750
 const RATE_LIMIT_DELAY_MS = 60_000
 const CHECKPOINT_FILE = '.collect-checkpoint'
@@ -21,7 +22,10 @@ function isRetryable(msg: string): boolean {
     lower.includes('abort') ||
     lower.includes('ecanceled') ||
     lower.includes('socket hang up') ||
-    lower.includes('econnreset')
+    lower.includes('econnreset') ||
+    lower.includes('api error: 502') ||
+    lower.includes('api error: 503') ||
+    lower.includes('terminated')
   )
 }
 
@@ -103,26 +107,33 @@ async function main() {
   const retryQueue: typeof users = []
   let processed = 0
 
-  for (const user of remaining) {
-    try {
-      await processUser(user.github_id)
-      checkpoint.add(user.github_id)
-      processed++
-      if (processed % 100 === 0) {
-        saveCheckpoint(checkpoint)
-        console.log(`${checkpoint.size}/${users.length} 완료 (실패: ${failed.length}, 재시도 대기: ${retryQueue.length})`)
-      }
-      await delay(GITHUB_DELAY_MS)
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err)
-      if (isRetryable(msg)) {
-        retryQueue.push(user)
-        console.warn(`  [RETRY] ${user.github_id} → 재시도 큐 (${retryQueue.length}명): ${msg}`)
+  for (let i = 0; i < remaining.length; i += CONCURRENCY) {
+    const batch = remaining.slice(i, i + CONCURRENCY)
+    const results = await Promise.allSettled(batch.map(u => processUser(u.github_id)))
+
+    for (let j = 0; j < batch.length; j++) {
+      const user = batch[j]
+      const result = results[j]
+      if (result.status === 'fulfilled') {
+        checkpoint.add(user.github_id)
+        processed++
+        if (processed % 100 === 0) {
+          saveCheckpoint(checkpoint)
+          console.log(`${checkpoint.size}/${users.length} 완료 (실패: ${failed.length}, 재시도 대기: ${retryQueue.length})`)
+        }
       } else {
-        console.warn(`[SKIP] ${user.github_id}: ${msg}`)
-        failed.push(user.github_id)
+        const msg = result.reason instanceof Error ? result.reason.message : String(result.reason)
+        if (isRetryable(msg)) {
+          retryQueue.push(user)
+          console.warn(`  [RETRY] ${user.github_id} → 재시도 큐 (${retryQueue.length}명): ${msg}`)
+        } else {
+          console.warn(`[SKIP] ${user.github_id}: ${msg}`)
+          failed.push(user.github_id)
+        }
       }
     }
+
+    await delay(GITHUB_DELAY_MS)
   }
 
   if (retryQueue.length > 0) {
