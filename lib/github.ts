@@ -3,6 +3,7 @@ export type ContributionStats = {
   current_streak: number
   longest_streak: number
   contribution_density: number
+  contribution_cv: number
   peak_intensity: number
   total_stars: number
   current_year_commits: number
@@ -96,8 +97,16 @@ export async function fetchContributions(username: string): Promise<Contribution
 
   const total_contributions: number = calendar.totalContributions
   const peak_intensity = days.reduce((max, d) => Math.max(max, d.count), 0)
-  const activeDays = days.filter((d) => d.count > 0).length
+  const activeCounts = days.filter((d) => d.count > 0).map((d) => d.count)
+  const activeDays = activeCounts.length
   const contribution_density = days.length > 0 ? activeDays / days.length : 0
+
+  let contribution_cv = 0
+  if (activeCounts.length >= 2) {
+    const mean = activeCounts.reduce((s, v) => s + v, 0) / activeCounts.length
+    const variance = activeCounts.reduce((s, v) => s + (v - mean) ** 2, 0) / activeCounts.length
+    contribution_cv = mean > 0 ? Math.sqrt(variance) / mean : 0
+  }
 
   let current_streak = 0
   for (let i = days.length - 1; i >= 0; i--) {
@@ -149,6 +158,7 @@ export async function fetchContributions(username: string): Promise<Contribution
     current_streak,
     longest_streak,
     contribution_density,
+    contribution_cv,
     peak_intensity,
     total_stars,
     current_year_commits,

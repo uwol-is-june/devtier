@@ -1,0 +1,3 @@
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS contribution_cv FLOAT,
+  ADD COLUMN IF NOT EXISTS bot_score FLOAT;

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { supabase } from '@/lib/supabase'
 import { fetchContributions } from '@/lib/github'
-import { calcScore } from '@/lib/score'
+import { calcScore, detectSuspiciousActivity } from '@/lib/score'
 
 const DB_CHUNK = 1000
 const CONCURRENCY = 3
@@ -63,6 +63,7 @@ async function fetchAllUsers(): Promise<{ id: number; github_id: string }[]> {
 async function processUser(github_id: string) {
   const stats = await fetchContributions(github_id)
   const score = calcScore(stats)
+  const bot_score = detectSuspiciousActivity(stats)
 
   const now = new Date().toISOString()
   const { error } = await supabase.from('users').upsert(
@@ -79,6 +80,8 @@ async function processUser(github_id: string) {
       total_prs: stats.total_prs,
       total_issues: stats.total_issues,
       top_languages: stats.top_languages,
+      contribution_cv: stats.contribution_cv,
+      bot_score,
       updated_at: now,
     },
     { onConflict: 'github_id' },

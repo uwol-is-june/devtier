@@ -1,6 +1,6 @@
 {
   "name": "devtier",
-  "version": "0.4.30",
+  "version": "0.4.34",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,6 +11,7 @@
     "collect:scores": "if [ -f .env.local ]; then tsx --env-file=.env.local scripts/collect-scores.ts; else tsx scripts/collect-scores.ts; fi",
     "recalc:tiers": "if [ -f .env.local ]; then tsx --env-file=.env.local scripts/recalc-tiers.ts; else tsx scripts/recalc-tiers.ts; fi",
     "batch:all": "npm run collect:users && npm run collect:scores && npm run recalc:tiers",
+    "analyze:bots": "if [ -f .env.local ]; then tsx --env-file=.env.local scripts/analyze-bot-detection.ts; else tsx scripts/analyze-bot-detection.ts; fi",
     "release": "release-it"
   },
   "dependencies": {

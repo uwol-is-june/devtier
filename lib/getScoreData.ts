@@ -1,5 +1,5 @@
 import { fetchContributions } from './github'
-import { calcScore } from './score'
+import { calcScore, detectSuspiciousActivity } from './score'
 import { getTierInfo } from './tier'
 import { supabase } from './supabase'
 import { evaluateAchievements, type AchievementStats } from './achievements'
@@ -72,6 +72,7 @@ async function getNextTierGap(tier: string, currentScore: number): Promise<{ nex
 export async function getScoreData(username: string): Promise<ScoreData> {
   const stats = await fetchContributions(username)
   const score = calcScore(stats)
+  const bot_score = detectSuspiciousActivity(stats)
 
   const [{ count }, { count: totalUsers }, { data: existingUser }] = await Promise.all([
     supabase.from('users').select('*', { count: 'exact', head: true }).gt('score', score),
@@ -100,6 +101,8 @@ export async function getScoreData(username: string): Promise<ScoreData> {
       total_prs: stats.total_prs,
       total_issues: stats.total_issues,
       top_languages: stats.top_languages,
+      contribution_cv: stats.contribution_cv,
+      bot_score,
       tier: tierInfo.tier,
       tier_rank: tierInfo.tier_rank,
       percentile: livePercentile,
