@@ -153,6 +153,7 @@ export const en: Translations = {
     themeLabel: 'Theme',
     sizeLabel: 'Size',
     alignLabel: 'Align',
+    langLabel: 'Language',
     themes: { dark: 'Dark', light: 'Light' },
     sizes: { sm: 'Small', md: 'Medium', lg: 'Large' },
     aligns: { left: 'Left', center: 'Center', right: 'Right' },
@@ -205,5 +206,17 @@ export const en: Translations = {
     placeholder: 'Enter GitHub username',
     button: 'Measure Power',
     loading: 'Loading…',
+  },
+  loading: {
+    lines: [
+      '> Fetching GitHub data...',
+      '> Analyzing contributions...',
+      '> Calculating power...',
+      '> Determining tier...',
+    ],
+  },
+  weakness: {
+    bottom: (label, n) => `▼ ${label} Bottom ${n}%`,
+    desc: 'Percentile vs all indexed users · Higher is stronger',
   },
 }

@@ -8,15 +8,16 @@ type BadgeInput = {
   percentile: number | null
   theme?: 'dark' | 'light'
   size?: 'sm' | 'md' | 'lg'
+  lang?: 'ko' | 'en'
 }
 
-const TIER_META: Record<string, { label: string; color: string; icon: string; anim: string }> = {
-  challenger: { label: '챌린저', color: '#FF4655', icon: 'crown',   anim: 'shimmer' },
-  diamond:    { label: '다이아',  color: '#56C8D8', icon: 'gem',     anim: 'rotate-shimmer' },
-  platinum:   { label: '플래티넘', color: '#5AC9A6', icon: 'crystal', anim: 'glow-pulse' },
-  gold:       { label: '골드',    color: '#FFD700', icon: 'crystal', anim: 'glow-pulse' },
-  silver:     { label: '실버',    color: '#C0C0C0', icon: 'crystal', anim: 'glow-pulse' },
-  bronze:     { label: '브론즈',  color: '#CD7F32', icon: 'crystal', anim: 'glow-pulse' },
+const TIER_META: Record<string, { label: string; labelEn: string; color: string; icon: string; anim: string }> = {
+  challenger: { label: '챌린저', labelEn: 'Challenger', color: '#FF4655', icon: 'crown',   anim: 'shimmer' },
+  diamond:    { label: '다이아',  labelEn: 'Diamond',    color: '#56C8D8', icon: 'gem',     anim: 'rotate-shimmer' },
+  platinum:   { label: '플래티넘', labelEn: 'Platinum',  color: '#5AC9A6', icon: 'crystal', anim: 'glow-pulse' },
+  gold:       { label: '골드',    labelEn: 'Gold',       color: '#FFD700', icon: 'crystal', anim: 'glow-pulse' },
+  silver:     { label: '실버',    labelEn: 'Silver',     color: '#C0C0C0', icon: 'crystal', anim: 'glow-pulse' },
+  bronze:     { label: '브론즈',  labelEn: 'Bronze',     color: '#CD7F32', icon: 'crystal', anim: 'glow-pulse' },
 }
 
 const THEME_CONFIGS = {
@@ -48,21 +49,26 @@ function getCssAnimations(perimeter: number, iconW: number): string {
 }
 
 
-export function generateBadgeSvg({ tier, tier_rank, score, percentile, theme = 'dark', size = 'md' }: BadgeInput): string {
+export function generateBadgeSvg({ tier, tier_rank, score, percentile, theme = 'dark', size = 'md', lang = 'ko' }: BadgeInput): string {
   const meta = TIER_META[tier] ?? TIER_META.bronze
   const tc = THEME_CONFIGS[theme]
   const sc = SIZE_CONFIGS[size]
   const { w, h, iconW, textX, y1, y2, fs1, fs2 } = sc
   const sf = iconW / 56
 
-  const tierLabel = tier_rank !== null ? `${meta.label} ${tier_rank}` : meta.label
-  const scoreLabel = `${score.toLocaleString('ko-KR')}점`
+  const baseLabel = lang === 'en' ? meta.labelEn : meta.label
+  const tierLabel = tier_rank !== null ? `${baseLabel} ${tier_rank}` : baseLabel
+  const scoreLabel = lang === 'en'
+    ? `${score.toLocaleString('en-US')}pts`
+    : `${score.toLocaleString('ko-KR')}점`
   const { color, icon, anim } = meta
   const t = tier
 
   const scoreLine = (tier_rank === null || percentile === null)
     ? `<tspan fill="${tc.text}">${scoreLabel}</tspan>`
-    : `<tspan fill="${tc.text}">${scoreLabel}</tspan><tspan fill="${tc.sub}"> · 상위 ${percentile.toFixed(1)}%</tspan>`
+    : lang === 'en'
+      ? `<tspan fill="${tc.text}">${scoreLabel}</tspan><tspan fill="${tc.sub}"> · Top ${percentile.toFixed(1)}%</tspan>`
+      : `<tspan fill="${tc.text}">${scoreLabel}</tspan><tspan fill="${tc.sub}"> · 상위 ${percentile.toFixed(1)}%</tspan>`
 
   const iconDataUri = TIER_ICON_BASE64[t] ?? TIER_ICON_BASE64.bronze
   const iconDefs = ''

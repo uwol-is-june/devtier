@@ -12,8 +12,10 @@ export async function GET(
   const { searchParams } = new URL(req.url)
   const rawTheme = searchParams.get('theme')
   const rawSize  = searchParams.get('size')
+  const rawLang  = searchParams.get('lang')
   const theme = rawTheme === 'light' ? 'light' : 'dark'
   const size  = rawSize === 'sm' ? 'sm' : rawSize === 'lg' ? 'lg' : 'md'
+  const lang  = rawLang === 'en' ? 'en' : 'ko'
 
   const { data: row } = await supabase
     .from('users')
@@ -29,6 +31,7 @@ export async function GET(
     percentile: row?.percentile ?? null,
     theme,
     size,
+    lang,
   })
 
   if (isCamo && row !== null) {

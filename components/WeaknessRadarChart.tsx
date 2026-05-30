@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useT } from '@/context/LangContext'
 import {
   RadarChart,
   Radar,
@@ -40,13 +41,18 @@ function CustomTick({
 
 export function WeaknessRadarChart({ data }: { data: WeaknessPercentile[] }) {
   const [mounted, setMounted] = useState(false)
+  const { t } = useT()
   useEffect(() => { setMounted(true) }, [])
 
   if (!mounted || data.length === 0) return null
 
-  const chartData = data.map(d => ({ ...d, fullMark: 100 }))
-  const weakSet = new Set(data.filter(d => d.pct < WEAK_THRESHOLD).map(d => d.label))
-  const weakPoints = data.filter(d => d.pct < WEAK_THRESHOLD)
+  const chartData = data.map(d => ({
+    ...d,
+    label: t.stats[d.key]?.label() ?? d.label,
+    fullMark: 100,
+  }))
+  const weakSet = new Set(chartData.filter(d => d.pct < WEAK_THRESHOLD).map(d => d.label))
+  const weakPoints = chartData.filter(d => d.pct < WEAK_THRESHOLD)
 
   return (
     <div className="stat-panel" style={{ marginTop: '1rem' }}>
@@ -110,7 +116,7 @@ export function WeaknessRadarChart({ data }: { data: WeaknessPercentile[] }) {
                 padding: '0.15rem 0.45rem',
               }}
             >
-              ▼ {p.label} 하위 {100 - p.pct}%
+              {t.weakness.bottom(p.label, 100 - p.pct)}
             </span>
           ))}
         </div>
@@ -122,7 +128,7 @@ export function WeaknessRadarChart({ data }: { data: WeaknessPercentile[] }) {
         fontSize: '0.6rem',
         color: 'rgba(255,255,255,0.2)',
       }}>
-        전체 수집 유저 대비 백분위 · 높을수록 강함
+        {t.weakness.desc}
       </div>
     </div>
   )

@@ -437,14 +437,7 @@ export default function HomeClient({
                   backdropFilter: 'blur(10px)',
                   minWidth: '200px',
                 }}>
-                  <div style={{
-                    width: '36px', height: '36px',
-                    borderRadius: '50%',
-                    background: 'radial-gradient(circle at 35% 30%, #FFE566, #FFD700 55%, #B8860C)',
-                    boxShadow: '0 0 14px rgba(255,215,0,0.55), inset 0 -2px 4px rgba(0,0,0,0.4)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '16px', flexShrink: 0,
-                  }}>★</div>
+                  <TierIcon tier="gold" size={36} />
                   <div>
                     <div style={{
                       fontFamily: 'var(--font-orbitron), monospace',

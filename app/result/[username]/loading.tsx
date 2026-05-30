@@ -1,10 +1,10 @@
+'use client'
+
+import { useT } from '@/context/LangContext'
+
 export default function ResultLoading() {
-  const lines = [
-    '> GitHub 데이터 수집 중...',
-    '> 잔디 분석 중...',
-    '> 전투력 계산 중...',
-    '> 티어 판정 중...',
-  ]
+  const { t } = useT()
+  const lines = t.loading.lines
 
   return (
     <div style={{ minHeight: '100vh', background: '#000', color: '#e6edf3', position: 'relative', overflow: 'hidden' }}>

@@ -6,18 +6,20 @@ import { useT } from '@/context/LangContext'
 type Theme = 'dark' | 'light'
 type Size  = 'sm' | 'md' | 'lg'
 type Align = 'left' | 'center' | 'right'
+type Lang  = 'ko' | 'en'
 
 const BASE = 'https://devtier-brown.vercel.app'
 
 export function BadgeCopy({ username }: { username: string }) {
+  const { t, locale } = useT()
   const [theme, setTheme] = useState<Theme>('dark')
   const [size,  setSize]  = useState<Size>('md')
   const [align, setAlign] = useState<Align>('left')
+  const [lang,  setLang]  = useState<Lang>(locale as Lang)
   const [copied, setCopied] = useState(false)
-  const { t } = useT()
 
-  const previewUrl = `/api/badge/${username}?theme=${theme}&size=${size}`
-  const badgeUrl   = `${BASE}/api/badge/${username}?theme=${theme}&size=${size}`
+  const previewUrl = `/api/badge/${username}?theme=${theme}&size=${size}&lang=${lang}`
+  const badgeUrl   = `${BASE}/api/badge/${username}?theme=${theme}&size=${size}&lang=${lang}`
   const resultUrl  = `${BASE}/result/${username}`
 
   const markdown =
@@ -45,6 +47,7 @@ export function BadgeCopy({ username }: { username: string }) {
     [t.badge.themeLabel, [['dark', t.badge.themes.dark], ['light', t.badge.themes.light]], theme, (v) => setTheme(v as Theme)],
     [t.badge.sizeLabel,  [['sm', t.badge.sizes.sm], ['md', t.badge.sizes.md], ['lg', t.badge.sizes.lg]], size, (v) => setSize(v as Size)],
     [t.badge.alignLabel, [['left', t.badge.aligns.left], ['center', t.badge.aligns.center], ['right', t.badge.aligns.right]], align, (v) => setAlign(v as Align)],
+    [t.badge.langLabel,  [['ko', 'KO'], ['en', 'EN']], lang, (v) => setLang(v as Lang)],
   ]
 
   return (

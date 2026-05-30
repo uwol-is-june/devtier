@@ -153,6 +153,7 @@ export const ko: Translations = {
     themeLabel: '테마',
     sizeLabel: '크기',
     alignLabel: '정렬',
+    langLabel: '언어',
     themes: { dark: '다크', light: '라이트' },
     sizes: { sm: '작게', md: '보통', lg: '크게' },
     aligns: { left: '왼쪽', center: '가운데', right: '오른쪽' },
@@ -205,5 +206,17 @@ export const ko: Translations = {
     placeholder: 'GitHub 아이디 입력',
     button: '전투력 측정',
     loading: '조회 중…',
+  },
+  loading: {
+    lines: [
+      '> GitHub 데이터 수집 중...',
+      '> 잔디 분석 중...',
+      '> 전투력 계산 중...',
+      '> 티어 판정 중...',
+    ],
+  },
+  weakness: {
+    bottom: (label, n) => `▼ ${label} 하위 ${n}%`,
+    desc: '전체 수집 유저 대비 백분위 · 높을수록 강함',
   },
 }

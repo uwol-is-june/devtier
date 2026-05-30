@@ -90,6 +90,7 @@ export type Translations = {
     themeLabel: string
     sizeLabel: string
     alignLabel: string
+    langLabel: string
     themes: Record<string, string>
     sizes: Record<string, string>
     aligns: Record<string, string>
@@ -135,5 +136,12 @@ export type Translations = {
     placeholder: string
     button: string
     loading: string
+  }
+  loading: {
+    lines: string[]
+  }
+  weakness: {
+    bottom: (label: string, n: number) => string
+    desc: string
   }
 }
