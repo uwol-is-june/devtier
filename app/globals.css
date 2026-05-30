@@ -81,11 +81,11 @@ body {
 }
 
 .animate-glow-pulse {
-  animation: glow-pulse 2s ease-in-out infinite;
+  animation: glow-pulse 2s ease-in-out infinite, float 3s ease-in-out infinite;
 }
 
 .animate-rotate-shimmer {
-  animation: rotate-shimmer 4s linear infinite;
+  animation: rotate-shimmer 4s linear infinite, float 3s ease-in-out infinite;
 }
 
 .animate-float {
