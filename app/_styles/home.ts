@@ -114,7 +114,7 @@ export const STYLES = `
 }
 
 .glitch-title {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-weight: 900;
   color: #7CFF5B;
   letter-spacing: 0.04em;
@@ -129,7 +129,7 @@ export const STYLES = `
 .glitch-layer {
   position: absolute;
   inset: 0;
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-weight: 900;
   letter-spacing: 0.04em;
   line-height: 1;
@@ -167,7 +167,7 @@ export const STYLES = `
 }
 
 .nav-logo {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
   color: #7CFF5B;
@@ -185,7 +185,7 @@ export const STYLES = `
 }
 
 .nav-link {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.58rem;
   font-weight: 400;
   letter-spacing: 0.2em;
@@ -205,7 +205,7 @@ export const STYLES = `
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.56rem;
   letter-spacing: 0.2em;
   color: rgba(124,255,91,0.7);
@@ -290,7 +290,7 @@ export const STYLES = `
 /* ── Buttons ── */
 
 .btn-primary {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -315,7 +315,7 @@ export const STYLES = `
 }
 
 .btn-outline {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.63rem;
   font-weight: 400;
   letter-spacing: 0.16em;
@@ -345,7 +345,7 @@ export const STYLES = `
   border: 1px solid rgba(124,255,91,0.22);
   border-radius: 8px;
   overflow: hidden;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Courier New', Courier, 'Malgun Gothic', 'Apple SD Gothic Neo', monospace;
   width: 100%;
   max-width: 520px;
   animation: border-glow 4s ease-in-out infinite;
@@ -407,7 +407,7 @@ export const STYLES = `
 }
 
 .stat-panel-label {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.58rem;
   letter-spacing: 0.22em;
   color: rgba(124,255,91,0.45);
@@ -422,14 +422,14 @@ export const STYLES = `
 }
 
 .stat-key {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.6rem;
   letter-spacing: 0.18em;
   color: rgba(255,255,255,0.45);
 }
 
 .stat-val {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   color: #7CFF5B;
@@ -445,7 +445,7 @@ export const STYLES = `
 }
 
 .tier-name {
-  font-family: var(--font-orbitron), monospace;
+  font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.1em;

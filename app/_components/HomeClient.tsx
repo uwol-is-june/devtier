@@ -91,7 +91,7 @@ function MyTierCard({ data }: { data: MyData }) {
       <TierIcon tier={data.tier} size={52} />
       <div style={{ textAlign: 'center' }}>
         <div style={{
-          fontFamily: 'var(--font-orbitron), monospace',
+          fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
           fontSize: '0.85rem',
           fontWeight: 700,
           color: tierColor,
@@ -106,14 +106,14 @@ function MyTierCard({ data }: { data: MyData }) {
       </div>
       <div style={{ textAlign: 'center' }}>
         <div style={{
-          fontFamily: 'var(--font-orbitron), monospace',
+          fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
           fontSize: '1.75rem',
           fontWeight: 900,
           color: tierColor,
           letterSpacing: '-0.02em',
         }}>{data.score.toLocaleString(localeStr)}</div>
         <div style={{
-          fontFamily: 'var(--font-orbitron), monospace',
+          fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
           fontSize: '0.52rem',
           letterSpacing: '0.2em',
           color: 'rgba(255,255,255,0.3)',
@@ -122,7 +122,7 @@ function MyTierCard({ data }: { data: MyData }) {
       </div>
       {data.percentile !== null && (
         <div style={{
-          fontFamily: 'var(--font-orbitron), monospace',
+          fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
           fontSize: '0.58rem',
           letterSpacing: '0.14em',
           color: tierColor,
@@ -138,7 +138,7 @@ function MyTierCard({ data }: { data: MyData }) {
         <a
           href={`/result/${data.github_id}`}
           style={{
-            fontFamily: 'var(--font-orbitron), monospace',
+            fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
             fontSize: '0.58rem',
             letterSpacing: '0.12em',
             color: 'rgba(124,255,91,0.7)',
@@ -394,7 +394,7 @@ export default function HomeClient({
               {t.hero.taglineSuffix}
             </p>
             <p style={{
-              fontFamily: 'var(--font-orbitron), monospace',
+              fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
               fontSize: '0.6rem',
               color: 'rgba(124,255,91,0.4)',
               letterSpacing: '0.22em',
@@ -440,7 +440,7 @@ export default function HomeClient({
                   <TierIcon tier="gold" size={36} />
                   <div>
                     <div style={{
-                      fontFamily: 'var(--font-orbitron), monospace',
+                      fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                       color: '#FFD700', fontWeight: 700,
                       fontSize: '0.62rem', letterSpacing: '0.15em',
                     }}>GOLD 1</div>
@@ -451,7 +451,7 @@ export default function HomeClient({
                   </div>
                   <div style={{
                     marginLeft: 'auto',
-                    fontFamily: 'var(--font-orbitron), monospace',
+                    fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                     color: 'rgba(255,255,255,0.25)', fontSize: '0.5rem', letterSpacing: '0.12em',
                   }}>DevTier</div>
                 </div>
@@ -470,7 +470,7 @@ export default function HomeClient({
           }}
         >
           <span style={{
-            fontFamily: 'var(--font-orbitron), monospace',
+            fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
             fontSize: '0.52rem', letterSpacing: '0.25em',
             color: 'rgba(124,255,91,0.38)',
           }}>SCROLL</span>
@@ -500,7 +500,7 @@ export default function HomeClient({
       >
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <div style={{
-            fontFamily: 'var(--font-orbitron), monospace',
+            fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
             fontSize: '0.58rem',
             letterSpacing: '0.28em',
             color: 'rgba(124,255,91,0.45)',
@@ -509,7 +509,7 @@ export default function HomeClient({
             {t.features.sectionLabel}
           </div>
           <h2 style={{
-            fontFamily: 'var(--font-orbitron), monospace',
+            fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
             fontSize: 'clamp(1.6rem, 4vw, 2.8rem)',
             fontWeight: 700,
             color: '#e6edf3',
@@ -551,7 +551,7 @@ export default function HomeClient({
                 <div className="card-shine" />
 
                 <div style={{
-                  fontFamily: 'var(--font-orbitron), monospace',
+                  fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                   fontSize: '0.58rem',
                   letterSpacing: '0.2em',
                   color: meta.accent,
@@ -579,7 +579,7 @@ export default function HomeClient({
                 </div>
 
                 <h3 style={{
-                  fontFamily: 'var(--font-orbitron), monospace',
+                  fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                   fontSize: '1rem',
                   fontWeight: 700,
                   color: '#e6edf3',
@@ -606,7 +606,7 @@ export default function HomeClient({
                   display: 'flex', alignItems: 'baseline', gap: '0.5rem',
                 }}>
                   <span style={{
-                    fontFamily: 'var(--font-orbitron), monospace',
+                    fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                     fontSize: '1.6rem',
                     fontWeight: 900,
                     color: meta.accent,
@@ -615,7 +615,7 @@ export default function HomeClient({
                     {meta.stat}
                   </span>
                   <span style={{
-                    fontFamily: 'var(--font-orbitron), monospace',
+                    fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                     fontSize: '0.55rem',
                     letterSpacing: '0.18em',
                     color: 'rgba(255,255,255,0.3)',
@@ -655,7 +655,7 @@ export default function HomeClient({
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div className="section-anim-child" style={{
-              fontFamily: 'var(--font-orbitron), monospace',
+              fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
               fontSize: '0.58rem',
               letterSpacing: '0.28em',
               color: 'rgba(124,255,91,0.45)',
@@ -665,7 +665,7 @@ export default function HomeClient({
 
             <div className="section-anim-child">
               <h2 style={{
-                fontFamily: 'var(--font-orbitron), monospace',
+                fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                 fontSize: 'clamp(1.6rem, 4vw, 2.6rem)',
                 fontWeight: 700,
                 color: '#e6edf3',
@@ -704,7 +704,7 @@ export default function HomeClient({
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div className="section-anim-child" style={{
-              fontFamily: 'var(--font-orbitron), monospace',
+              fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
               fontSize: '0.58rem',
               letterSpacing: '0.28em',
               color: 'rgba(124,255,91,0.45)',
@@ -747,7 +747,7 @@ export default function HomeClient({
                 border: '1px solid rgba(124,255,91,0.1)',
                 borderRadius: '6px',
                 padding: '1.1rem 1.25rem',
-                fontFamily: 'Courier New, monospace',
+                fontFamily: "Courier New, 'Malgun Gothic', 'Apple SD Gothic Neo', monospace",
                 fontSize: '0.72rem',
                 lineHeight: 2,
                 color: 'rgba(255,255,255,0.35)',
@@ -787,7 +787,7 @@ export default function HomeClient({
         <div style={{ maxWidth: '720px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <div className="section-anim-child" style={{
-              fontFamily: 'var(--font-orbitron), monospace',
+              fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
               fontSize: '0.58rem',
               letterSpacing: '0.28em',
               color: 'rgba(124,255,91,0.45)',
@@ -796,7 +796,7 @@ export default function HomeClient({
               {t.ranking.label}
             </div>
             <h2 className="section-anim-child" style={{
-              fontFamily: 'var(--font-orbitron), monospace',
+              fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
               fontSize: 'clamp(1.6rem, 4vw, 2.8rem)',
               fontWeight: 700,
               color: '#e6edf3',
@@ -867,7 +867,7 @@ export default function HomeClient({
           position: 'relative',
         }}>
           <div className="section-anim-child" style={{
-            fontFamily: 'var(--font-orbitron), monospace',
+            fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
             fontSize: '0.58rem',
             letterSpacing: '0.28em',
             color: 'rgba(124,255,91,0.45)',
@@ -877,7 +877,7 @@ export default function HomeClient({
 
           <div className="section-anim-child">
             <h2 style={{
-              fontFamily: 'var(--font-orbitron), monospace',
+              fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
               fontSize: 'clamp(1.8rem, 6vw, 4rem)',
               fontWeight: 900,
               color: '#e6edf3',
@@ -951,7 +951,7 @@ export default function HomeClient({
           </div>
 
           <p className="section-anim-child" style={{
-            fontFamily: 'var(--font-orbitron), monospace',
+            fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
             fontSize: '0.55rem',
             letterSpacing: '0.18em',
             color: 'rgba(255,255,255,0.2)',

@@ -88,7 +88,7 @@ export default async function AdminPage({
 
   if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
     return (
-      <main style={{ padding: '2rem', fontFamily: 'monospace', color: '#e6edf3', background: '#0d1117', minHeight: '100vh' }}>
+      <main style={{ padding: '2rem', fontFamily: "'Malgun Gothic', 'Apple SD Gothic Neo', monospace", color: '#e6edf3', background: '#0d1117', minHeight: '100vh' }}>
         <p style={{ color: '#f85149' }}>Access denied</p>
       </main>
     )
@@ -101,7 +101,7 @@ export default async function AdminPage({
   return (
     <main style={{
       padding: '2rem',
-      fontFamily: 'system-ui, monospace',
+      fontFamily: "system-ui, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
       color: '#e6edf3',
       background: '#0d1117',
       minHeight: '100vh',

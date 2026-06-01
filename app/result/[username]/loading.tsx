@@ -26,7 +26,7 @@ export default function ResultLoading() {
         .scan-line {
           opacity: 0;
           animation: fadeInLine 0.3s ease forwards;
-          font-family: monospace;
+          font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', monospace;
           font-size: 13px;
           color: #7cff5b;
           line-height: 1.8;
@@ -36,7 +36,7 @@ export default function ResultLoading() {
           display: inline-block;
           animation: blink 0.8s step-end infinite;
           color: #7cff5b;
-          font-family: monospace;
+          font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', monospace;
         }
       `}</style>
 

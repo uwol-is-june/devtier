@@ -22,7 +22,7 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, monospace;
+  font-family: system-ui, -apple-system, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   min-height: 100vh;
 }
 

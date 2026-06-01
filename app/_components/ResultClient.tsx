@@ -88,11 +88,11 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
             <span className="glitch-layer glitch-layer-1" aria-hidden="true" style={{ color: '#FF4655', fontSize: 'clamp(3rem, 10vw, 5rem)' }}>404</span>
             <span className="glitch-layer glitch-layer-2" aria-hidden="true" style={{ color: '#FF4655', fontSize: 'clamp(3rem, 10vw, 5rem)' }}>404</span>
           </div>
-          <p style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.65rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.38)', marginBottom: '0.75rem' }}>
+          <p style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.65rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.38)', marginBottom: '0.75rem' }}>
             USER_NOT_FOUND
           </p>
           <p style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif', fontSize: '0.9rem', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
-            <span style={{ color: '#7CFF5B', fontFamily: 'Courier New, monospace' }}>{username}</span>
+            <span style={{ color: '#7CFF5B', fontFamily: "Courier New, 'Malgun Gothic', 'Apple SD Gothic Neo', monospace" }}>{username}</span>
             {' '}{t.result.notFoundSuffix}
           </p>
           <a href="/" className="btn-primary">{t.result.backToHome}</a>
@@ -204,13 +204,13 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
           </a>
 
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.52rem', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.3)', marginBottom: '0.5rem' }}>
+            <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.52rem', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.3)', marginBottom: '0.5rem' }}>
               {t.result.combatPower}
             </div>
-            <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: 'clamp(2.4rem, 8vw, 3.8rem)', fontWeight: 900, color: tierColor, textShadow: `0 0 20px ${tierColor}66`, letterSpacing: '-0.02em' }}>
+            <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: 'clamp(2.4rem, 8vw, 3.8rem)', fontWeight: 900, color: tierColor, textShadow: `0 0 20px ${tierColor}66`, letterSpacing: '-0.02em' }}>
               <ScoreCounter target={data.score} />
             </div>
-            <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.52rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.3)', marginTop: '0.3rem' }}>
+            <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.52rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.3)', marginTop: '0.3rem' }}>
               {t.result.points}
             </div>
             {data.next_tier_gap !== null && data.next_tier_label && (
@@ -250,7 +250,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   style={{
-                    fontFamily: 'var(--font-orbitron), monospace',
+                    fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                     fontSize: '0.58rem',
                     letterSpacing: '0.22em',
                     color: isActive ? '#7CFF5B' : 'rgba(255,255,255,0.28)',
@@ -278,7 +278,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
               ))}
               {data.details.top_languages.length > 0 && (
                 <div style={{ marginTop: '1.25rem' }}>
-                  <div style={{ fontFamily: 'var(--font-orbitron), monospace', fontSize: '0.5rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '0.6rem' }}>
+                  <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.5rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '0.6rem' }}>
                     TOP_LANGUAGES
                   </div>
                   <div style={{ display: 'flex', height: '6px', borderRadius: '3px', overflow: 'hidden', gap: '1px' }}>
