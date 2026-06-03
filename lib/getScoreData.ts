@@ -10,9 +10,11 @@ export type ScoreData = {
   tier: string
   tier_rank: number | null
   percentile: number | null
+  lang_percentile: number | null
   total_users: number | null
   next_tier_label: string | null
   next_tier_gap: number | null
+  bot_score: number
   details: {
     total_contributions: number
     current_streak: number
@@ -126,6 +128,8 @@ export async function getScoreData(username: string): Promise<ScoreData> {
 
   const unlockedIds = evaluateAchievements(achievementStats, { isNewUser })
 
+  const topLang = stats.top_languages[0]?.name ?? null
+
   const [{ next_tier_label, next_tier_gap }] = await Promise.all([
     getNextTierGap(tierInfo.tier, score),
     unlockedIds.length > 0
@@ -136,15 +140,34 @@ export async function getScoreData(username: string): Promise<ScoreData> {
       : Promise.resolve(null),
   ])
 
+  let lang_percentile: number | null = null
+  if (topLang) {
+    try {
+      const [{ count: langHigher }, { count: langTotal }] = await Promise.all([
+        supabase.from('users').select('*', { count: 'exact', head: true })
+          .eq('top_language', topLang).gt('score', score),
+        supabase.from('users').select('*', { count: 'exact', head: true })
+          .eq('top_language', topLang),
+      ])
+      if (langTotal) {
+        lang_percentile = Math.round(((langHigher ?? 0) / langTotal) * 1000) / 10
+      }
+    } catch {
+      // top_language column may not exist yet before migration runs
+    }
+  }
+
   return {
     github_id: username,
     score,
     tier: tierInfo.tier,
     tier_rank: tierInfo.tier_rank,
     percentile: livePercentile,
+    lang_percentile,
     total_users: totalUsers ?? null,
     next_tier_label,
     next_tier_gap,
+    bot_score,
     details: {
       total_contributions: stats.total_contributions,
       current_streak: stats.current_streak,

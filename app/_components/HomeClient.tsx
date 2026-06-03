@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, Suspense } from 'react'
 import { Orbitron, Space_Grotesk } from 'next/font/google'
 import ParticleCanvas from './ParticleCanvas'
 import { STYLES } from '../_styles/home'
@@ -825,7 +825,9 @@ export default function HomeClient({
           </div>
 
           <div className="section-anim-child">
-            <RankingTable initialRows={ranking} myData={myData} total={rankingTotal} />
+            <Suspense fallback={null}>
+              <RankingTable initialRows={ranking} myData={myData} total={rankingTotal} />
+            </Suspense>
           </div>
         </div>
       </section>

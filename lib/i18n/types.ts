@@ -75,6 +75,7 @@ export type Translations = {
     points: string
     nextTier: (label: string, gap: string) => string
     topPercent: (n: string) => string
+    langTopPercent: (lang: string, n: string) => string
     totalUsers: (n: string) => string
     tabs: { stats: string; achievements: string }
     badgeTerminalTitle: string
@@ -119,6 +120,8 @@ export type Translations = {
     loading: string
     expand: string
     collapse: string
+    langFilter: string
+    allLangs: string
   }
   achievements: {
     title: string
@@ -143,5 +146,27 @@ export type Translations = {
   weakness: {
     bottom: (label: string, n: number) => string
     desc: string
+  }
+  advice: {
+    sectionLabel: string
+    topRank: string
+    streakStart: string
+    streakExtend: (days: number) => string
+    prPenalty: (needed: number, multiplier: string) => string
+    prCount: (needed: number) => string
+    density: (current: number) => string
+    gainBadge: (n: string) => string
+  }
+  compare: {
+    vs: string
+    draw: string
+    winsBy: (winner: string, gap: string) => string
+    statsLabel: string
+    withLabel: string
+    inputPlaceholder: string
+    goBtn: string
+    copyLink: string
+    linkCopied: string
+    radarTitle: string
   }
 }

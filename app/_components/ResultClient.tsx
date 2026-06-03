@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Orbitron, Space_Grotesk } from 'next/font/google'
 import ParticleCanvas from './ParticleCanvas'
 import { STYLES } from '../_styles/home'
@@ -16,6 +17,7 @@ import { WeaknessRadarChart } from '@/components/WeaknessRadarChart'
 import { LangToggle } from '@/components/LangToggle'
 import { useT } from '@/context/LangContext'
 import type { ScoreData, WeaknessPercentile } from '@/lib/getScoreData'
+import { generateAdvice, type AdviceItem } from '@/lib/advice'
 
 const orbitron = Orbitron({
   subsets: ['latin'],
@@ -60,8 +62,10 @@ type Props = {
 export function ResultClient({ username, data, loggedInId, weaknessData }: Props) {
   const rootClass = `${orbitron.variable} ${spaceGrotesk.variable}`
   const [activeTab, setActiveTab] = useState<'stats' | 'achievements'>('stats')
+  const [compareInput, setCompareInput] = useState('')
   const { t, locale } = useT()
   const localeStr = locale === 'ko' ? 'ko-KR' : 'en-US'
+  const router = useRouter()
 
   if (!data) {
     return (
@@ -224,16 +228,28 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
           </div>
 
           {data.percentile !== null && (
-            <div
-              className="status-badge"
-              style={{ borderColor: `${tierColor}44`, background: `${tierColor}0a`, color: tierColor }}
-            >
-              <span className="status-dot" style={{ background: tierColor, animation: 'none', boxShadow: `0 0 6px ${tierColor}` }} />
-              {t.result.topPercent(data.percentile.toFixed(1))}
-              {data.total_users !== null && (
-                <span style={{ opacity: 0.5, fontSize: '0.5rem' }}>
-                  {' '}({t.result.totalUsers(data.total_users.toLocaleString(localeStr))})
-                </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+              <div
+                className="status-badge"
+                style={{ borderColor: `${tierColor}44`, background: `${tierColor}0a`, color: tierColor }}
+              >
+                <span className="status-dot" style={{ background: tierColor, animation: 'none', boxShadow: `0 0 6px ${tierColor}` }} />
+                {t.result.topPercent(data.percentile.toFixed(1))}
+                {data.total_users !== null && (
+                  <span style={{ opacity: 0.5, fontSize: '0.5rem' }}>
+                    {' '}({t.result.totalUsers(data.total_users.toLocaleString(localeStr))})
+                  </span>
+                )}
+              </div>
+              {data.lang_percentile !== null && data.details.top_languages[0]?.name && (
+                <div style={{
+                  fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
+                  fontSize: '0.52rem',
+                  letterSpacing: '0.1em',
+                  color: 'rgba(255,255,255,0.35)',
+                }}>
+                  {t.result.langTopPercent(data.details.top_languages[0].name, data.lang_percentile.toFixed(1))}
+                </div>
               )}
             </div>
           )}
@@ -305,6 +321,9 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
           {activeTab === 'achievements' && <AchievementGrid username={data.github_id} />}
         </div>
 
+        {/* ── Score Advice ── */}
+        <ScoreAdvice data={data} />
+
         {/* ── Weakness Analysis ── */}
         {weaknessData.length > 0 && <WeaknessRadarChart data={weaknessData} />}
 
@@ -338,7 +357,156 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
           />
         </div>
 
+        {/* ── Compare with another user ── */}
+        <div className="stat-panel">
+          <div style={{
+            fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
+            fontSize: '0.5rem',
+            letterSpacing: '0.22em',
+            color: 'rgba(255,255,255,0.28)',
+            marginBottom: '0.75rem',
+          }}>
+            VERSUS
+          </div>
+          <p style={{
+            fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
+            fontSize: '0.75rem',
+            color: 'rgba(255,255,255,0.4)',
+            marginBottom: '0.75rem',
+          }}>
+            {t.compare.withLabel}
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              const target = compareInput.trim()
+              if (!target) return
+              router.push(`/compare/${data.github_id}/${target}`)
+            }}
+            style={{ display: 'flex', gap: '0.5rem' }}
+          >
+            <input
+              type="text"
+              value={compareInput}
+              onChange={e => setCompareInput(e.target.value)}
+              placeholder={t.compare.inputPlaceholder}
+              style={{
+                flex: 1,
+                fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
+                fontSize: '0.85rem',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '6px',
+                padding: '0.55rem 0.85rem',
+                color: '#e6edf3',
+                outline: 'none',
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
+                fontSize: '0.58rem',
+                letterSpacing: '0.12em',
+                color: '#7CFF5B',
+                background: 'rgba(124,255,91,0.08)',
+                border: '1px solid rgba(124,255,91,0.25)',
+                borderRadius: '6px',
+                padding: '0.55rem 1rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {t.compare.goBtn}
+            </button>
+          </form>
+        </div>
+
       </main>
+    </div>
+  )
+}
+
+// ── ScoreAdvice ───────────────────────────────────────────────────────────────
+
+const ADVICE_ICONS: Record<string, string> = {
+  streakStart:  '🔥',
+  streakExtend: '🔥',
+  prPenalty:    '🔀',
+  prCount:      '🔀',
+  density:      '🌱',
+}
+
+function ScoreAdvice({ data }: { data: ScoreData }) {
+  const { t, locale } = useT()
+  const localeStr = locale === 'ko' ? 'ko-KR' : 'en-US'
+
+  const getMessage = (item: AdviceItem): string => {
+    switch (item.type) {
+      case 'streakStart':  return t.advice.streakStart
+      case 'streakExtend': return t.advice.streakExtend(item.days!)
+      case 'prPenalty':    return t.advice.prPenalty(item.needed!, item.multiplier!)
+      case 'prCount':      return t.advice.prCount(item.needed!)
+      case 'density':      return t.advice.density(item.current!)
+    }
+  }
+
+  if (data.tier === 'challenger') {
+    return (
+      <div className="stat-panel">
+        <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.5rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '1rem' }}>
+          {t.advice.sectionLabel}
+        </div>
+        <p style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif', fontSize: '0.85rem', color: 'rgba(255,255,255,0.55)', textAlign: 'center', padding: '0.5rem 0' }}>
+          {t.advice.topRank}
+        </p>
+      </div>
+    )
+  }
+
+  const items = generateAdvice(data)
+  if (items.length === 0) return null
+
+  return (
+    <div className="stat-panel">
+      <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.5rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '1rem' }}>
+        {t.advice.sectionLabel}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+        {items.map((item, i) => (
+          <div
+            key={i}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.7rem 0.9rem',
+              background: 'rgba(124,255,91,0.04)',
+              border: '1px solid rgba(124,255,91,0.1)',
+              borderRadius: '6px',
+            }}
+          >
+            <span style={{ fontSize: '1rem', flexShrink: 0 }}>{ADVICE_ICONS[item.type]}</span>
+            <span style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', flex: 1, lineHeight: 1.4 }}>
+              {getMessage(item)}
+            </span>
+            <span style={{
+              fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
+              fontSize: '0.62rem',
+              fontWeight: 700,
+              color: '#7CFF5B',
+              background: 'rgba(124,255,91,0.1)',
+              border: '1px solid rgba(124,255,91,0.2)',
+              borderRadius: '4px',
+              padding: '0.2rem 0.5rem',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}>
+              {t.advice.gainBadge(item.gain.toLocaleString(localeStr))}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
