@@ -97,7 +97,6 @@ export type Translations = {
     aligns: Record<string, string>
     copy: string
     copied: string
-    warning: string
   }
   share: {
     title: string
