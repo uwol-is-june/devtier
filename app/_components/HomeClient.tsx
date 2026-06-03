@@ -114,7 +114,7 @@ function MyTierCard({ data }: { data: MyData }) {
         }}>{data.score.toLocaleString(localeStr)}</div>
         <div style={{
           fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-          fontSize: '0.52rem',
+          fontSize: '0.6rem',
           letterSpacing: '0.2em',
           color: 'rgba(255,255,255,0.3)',
           marginTop: '2px',
@@ -123,7 +123,7 @@ function MyTierCard({ data }: { data: MyData }) {
       {data.percentile !== null && (
         <div style={{
           fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-          fontSize: '0.58rem',
+          fontSize: '0.7rem',
           letterSpacing: '0.14em',
           color: tierColor,
           border: `1px solid ${tierColor}55`,
@@ -139,7 +139,7 @@ function MyTierCard({ data }: { data: MyData }) {
           href={`/result/${data.github_id}`}
           style={{
             fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-            fontSize: '0.58rem',
+            fontSize: '0.7rem',
             letterSpacing: '0.12em',
             color: 'rgba(124,255,91,0.7)',
             textDecoration: 'none',
@@ -442,7 +442,7 @@ export default function HomeClient({
                     <div style={{
                       fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
                       color: '#FFD700', fontWeight: 700,
-                      fontSize: '0.62rem', letterSpacing: '0.15em',
+                      fontSize: '0.7rem', letterSpacing: '0.15em',
                     }}>GOLD 1</div>
                     <div style={{
                       fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
@@ -452,7 +452,7 @@ export default function HomeClient({
                   <div style={{
                     marginLeft: 'auto',
                     fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-                    color: 'rgba(255,255,255,0.25)', fontSize: '0.5rem', letterSpacing: '0.12em',
+                    color: 'rgba(255,255,255,0.25)', fontSize: '0.6rem', letterSpacing: '0.12em',
                   }}>DevTier</div>
                 </div>
               </div>
@@ -471,7 +471,7 @@ export default function HomeClient({
         >
           <span style={{
             fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-            fontSize: '0.52rem', letterSpacing: '0.25em',
+            fontSize: '0.6rem', letterSpacing: '0.25em',
             color: 'rgba(124,255,91,0.38)',
           }}>SCROLL</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'center' }}>
@@ -501,7 +501,7 @@ export default function HomeClient({
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <div style={{
             fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-            fontSize: '0.58rem',
+            fontSize: '0.7rem',
             letterSpacing: '0.28em',
             color: 'rgba(124,255,91,0.45)',
             marginBottom: '1rem',
@@ -552,7 +552,7 @@ export default function HomeClient({
 
                 <div style={{
                   fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-                  fontSize: '0.58rem',
+                  fontSize: '0.7rem',
                   letterSpacing: '0.2em',
                   color: meta.accent,
                   opacity: 0.7,
@@ -616,7 +616,7 @@ export default function HomeClient({
                   </span>
                   <span style={{
                     fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-                    fontSize: '0.55rem',
+                    fontSize: '0.6rem',
                     letterSpacing: '0.18em',
                     color: 'rgba(255,255,255,0.3)',
                   }}>
@@ -753,7 +753,7 @@ export default function HomeClient({
                 color: 'rgba(255,255,255,0.35)',
               }}
             >
-              <span style={{ color: 'rgba(124,255,91,0.6)', fontSize: '0.58rem', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>{t.system.formulaLabel}</span>
+              <span style={{ color: 'rgba(124,255,91,0.6)', fontSize: '0.7rem', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>{t.system.formulaLabel}</span>
               <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.grass}</span>       × 1{'\n'}
               + <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.currentStreak}</span> × 3{'\n'}
               + <span style={{ color: '#79C0FF' }}>{t.system.formulaMetrics.maxStreak}</span> × 2{'\n'}
@@ -870,7 +870,7 @@ export default function HomeClient({
         }}>
           <div className="section-anim-child" style={{
             fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-            fontSize: '0.58rem',
+            fontSize: '0.7rem',
             letterSpacing: '0.28em',
             color: 'rgba(124,255,91,0.45)',
           }}>
@@ -954,7 +954,7 @@ export default function HomeClient({
 
           <p className="section-anim-child" style={{
             fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-            fontSize: '0.55rem',
+            fontSize: '0.6rem',
             letterSpacing: '0.18em',
             color: 'rgba(255,255,255,0.2)',
             margin: 0,

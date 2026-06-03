@@ -160,7 +160,6 @@ export const ko: Translations = {
     aligns: { left: '왼쪽', center: '가운데', right: '오른쪽' },
     copy: '복사',
     copied: '✓ 복사됨',
-    warning: '⚠️ GitHub location을 한국으로 설정한 유저 기준 백분위입니다.',
   },
   share: {
     title: '결과 공유하기',

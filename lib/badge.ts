@@ -67,8 +67,8 @@ export function generateBadgeSvg({ tier, tier_rank, score, percentile, theme = '
   const scoreLine = (tier_rank === null || percentile === null)
     ? `<tspan fill="${tc.text}">${scoreLabel}</tspan>`
     : lang === 'en'
-      ? `<tspan fill="${tc.text}">${scoreLabel}</tspan><tspan fill="${tc.sub}"> · Top ${percentile.toFixed(1)}%</tspan>`
-      : `<tspan fill="${tc.text}">${scoreLabel}</tspan><tspan fill="${tc.sub}"> · 상위 ${percentile.toFixed(1)}%</tspan>`
+      ? `<tspan fill="${tc.text}">${scoreLabel}</tspan><tspan fill="${tc.sub}"> · Top ${percentile.toFixed(1)}% KR</tspan>`
+      : `<tspan fill="${tc.text}">${scoreLabel}</tspan><tspan fill="${tc.sub}"> · 국내 상위 ${percentile.toFixed(1)}%</tspan>`
 
   const iconDataUri = TIER_ICON_BASE64[t] ?? TIER_ICON_BASE64.bronze
   const iconDefs = ''

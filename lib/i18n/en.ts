@@ -160,7 +160,6 @@ export const en: Translations = {
     aligns: { left: 'Left', center: 'Center', right: 'Right' },
     copy: 'Copy',
     copied: '✓ Copied',
-    warning: '⚠️ Percentile is based on users with GitHub location set to Korea.',
   },
   share: {
     title: 'Share Results',

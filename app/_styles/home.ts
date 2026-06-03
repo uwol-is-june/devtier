@@ -186,7 +186,7 @@ export const STYLES = `
 
 .nav-link {
   font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-  font-size: 0.58rem;
+  font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.2em;
   color: rgba(255,255,255,0.4);
@@ -206,7 +206,7 @@ export const STYLES = `
   align-items: center;
   gap: 9px;
   font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-  font-size: 0.56rem;
+  font-size: 0.6rem;
   letter-spacing: 0.2em;
   color: rgba(124,255,91,0.7);
   border: 1px solid rgba(124,255,91,0.18);
@@ -316,7 +316,7 @@ export const STYLES = `
 
 .btn-outline {
   font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-  font-size: 0.63rem;
+  font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.16em;
   background: transparent;
@@ -367,7 +367,7 @@ export const STYLES = `
 
 .terminal-title {
   font-family: var(--font-space-grotesk), system-ui, sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   color: rgba(255,255,255,0.35);
   margin-left: 0.5rem;
 }
@@ -408,7 +408,7 @@ export const STYLES = `
 
 .stat-panel-label {
   font-family: var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   letter-spacing: 0.22em;
   color: rgba(124,255,91,0.45);
 }
@@ -473,7 +473,7 @@ export const STYLES = `
 
 .tier-range {
   font-family: var(--font-space-grotesk), system-ui, sans-serif;
-  font-size: 0.58rem;
+  font-size: 0.7rem;
   color: rgba(255,255,255,0.3);
   min-width: 76px;
   text-align: right;
@@ -500,7 +500,7 @@ export const STYLES = `
 @media (max-width: 768px) {
   .cyber-nav { padding: 0.75rem 1.2rem; }
   .nav-links  { gap: 1.4rem; }
-  .nav-link   { font-size: 0.52rem; }
+  .nav-link   { font-size: 0.6rem; }
 }
 
 @media (max-width: 540px) {

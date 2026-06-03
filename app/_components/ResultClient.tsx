@@ -208,17 +208,17 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
           </a>
 
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.52rem', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.3)', marginBottom: '0.5rem' }}>
+            <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.6rem', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.3)', marginBottom: '0.5rem' }}>
               {t.result.combatPower}
             </div>
             <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: 'clamp(2.4rem, 8vw, 3.8rem)', fontWeight: 900, color: tierColor, textShadow: `0 0 20px ${tierColor}66`, letterSpacing: '-0.02em' }}>
               <ScoreCounter target={data.score} />
             </div>
-            <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.52rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.3)', marginTop: '0.3rem' }}>
+            <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.6rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.3)', marginTop: '0.3rem' }}>
               {t.result.points}
             </div>
             {data.next_tier_gap !== null && data.next_tier_label && (
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.5rem' }}>
+              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.5rem' }}>
                 {t.result.nextTier(
                   t.tier.labels[KO_TO_TIER_KEY[data.next_tier_label] ?? ''] ?? data.next_tier_label,
                   data.next_tier_gap.toLocaleString(localeStr)
@@ -236,7 +236,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
                 <span className="status-dot" style={{ background: tierColor, animation: 'none', boxShadow: `0 0 6px ${tierColor}` }} />
                 {t.result.topPercent(data.percentile.toFixed(1))}
                 {data.total_users !== null && (
-                  <span style={{ opacity: 0.5, fontSize: '0.5rem' }}>
+                  <span style={{ opacity: 0.5, fontSize: '0.6rem' }}>
                     {' '}({t.result.totalUsers(data.total_users.toLocaleString(localeStr))})
                   </span>
                 )}
@@ -244,7 +244,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
               {data.lang_percentile !== null && data.details.top_languages[0]?.name && (
                 <div style={{
                   fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-                  fontSize: '0.52rem',
+                  fontSize: '0.6rem',
                   letterSpacing: '0.1em',
                   color: 'rgba(255,255,255,0.35)',
                 }}>
@@ -267,7 +267,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
                   onClick={() => setActiveTab(tab)}
                   style={{
                     fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-                    fontSize: '0.58rem',
+                    fontSize: '0.7rem',
                     letterSpacing: '0.22em',
                     color: isActive ? '#7CFF5B' : 'rgba(255,255,255,0.28)',
                     background: 'none',
@@ -294,7 +294,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
               ))}
               {data.details.top_languages.length > 0 && (
                 <div style={{ marginTop: '1.25rem' }}>
-                  <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.5rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '0.6rem' }}>
+                  <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.6rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '0.6rem' }}>
                     TOP_LANGUAGES
                   </div>
                   <div style={{ display: 'flex', height: '6px', borderRadius: '3px', overflow: 'hidden', gap: '1px' }}>
@@ -308,7 +308,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1rem', marginTop: '0.5rem' }}>
                     {data.details.top_languages.map((lang, i) => (
-                      <span key={lang.name} style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <span key={lang.name} style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                         <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: LANG_COLORS[i % LANG_COLORS.length] }} />
                         {lang.name} {lang.pct.toFixed(1)}%
                       </span>
@@ -361,7 +361,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
         <div className="stat-panel">
           <div style={{
             fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-            fontSize: '0.5rem',
+            fontSize: '0.6rem',
             letterSpacing: '0.22em',
             color: 'rgba(255,255,255,0.28)',
             marginBottom: '0.75rem',
@@ -370,7 +370,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
           </div>
           <p style={{
             fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-            fontSize: '0.75rem',
+            fontSize: '0.85rem',
             color: 'rgba(255,255,255,0.4)',
             marginBottom: '0.75rem',
           }}>
@@ -406,7 +406,7 @@ export function ResultClient({ username, data, loggedInId, weaknessData }: Props
               type="submit"
               style={{
                 fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-                fontSize: '0.58rem',
+                fontSize: '0.7rem',
                 letterSpacing: '0.12em',
                 color: '#7CFF5B',
                 background: 'rgba(124,255,91,0.08)',
@@ -454,7 +454,7 @@ function ScoreAdvice({ data }: { data: ScoreData }) {
   if (data.tier === 'challenger') {
     return (
       <div className="stat-panel">
-        <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.5rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '1rem' }}>
+        <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.6rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '1rem' }}>
           {t.advice.sectionLabel}
         </div>
         <p style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif', fontSize: '0.85rem', color: 'rgba(255,255,255,0.55)', textAlign: 'center', padding: '0.5rem 0' }}>
@@ -469,7 +469,7 @@ function ScoreAdvice({ data }: { data: ScoreData }) {
 
   return (
     <div className="stat-panel">
-      <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.5rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '1rem' }}>
+      <div style={{ fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif", fontSize: '0.6rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.28)', marginBottom: '1rem' }}>
         {t.advice.sectionLabel}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
@@ -492,7 +492,7 @@ function ScoreAdvice({ data }: { data: ScoreData }) {
             </span>
             <span style={{
               fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-              fontSize: '0.62rem',
+              fontSize: '0.7rem',
               fontWeight: 700,
               color: '#7CFF5B',
               background: 'rgba(124,255,91,0.1)',

@@ -107,9 +107,6 @@ export function BadgeCopy({ username }: { username: string }) {
         </button>
       </div>
 
-      <p className="text-xs text-[var(--text-sub)]">
-        {t.badge.warning}
-      </p>
     </div>
   )
 }
