@@ -549,14 +549,20 @@ function UserCard({ username, data, color, tierLabel, isWinner, localeStr }: Use
           )}
         </>
       ) : (
-        <div style={{
-          fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-          fontSize: '0.78rem',
-          color: 'rgba(255,255,255,0.3)',
-          textAlign: 'center',
-          padding: '1rem 0',
-        }}>
-          {t.result.notFoundSuffix}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1.5rem 0' }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,70,85,0.5)" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M15 9l-6 6M9 9l6 6" />
+          </svg>
+          <div style={{
+            fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
+            fontSize: '0.75rem',
+            color: 'rgba(255,70,85,0.7)',
+            textAlign: 'center',
+            lineHeight: 1.5,
+          }}>
+            {t.compare.notFound}
+          </div>
         </div>
       )}
     </div>

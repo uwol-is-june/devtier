@@ -240,5 +240,6 @@ export const ko: Translations = {
     copyLink: '링크 복사',
     linkCopied: '✓ 링크 복사됨',
     radarTitle: 'POWER_COMPARISON',
+    notFound: '존재하지 않는 GitHub 아이디입니다',
   },
 }

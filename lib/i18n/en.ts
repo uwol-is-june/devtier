@@ -240,5 +240,6 @@ export const en: Translations = {
     copyLink: 'Copy Link',
     linkCopied: '✓ Link Copied',
     radarTitle: 'POWER_COMPARISON',
+    notFound: 'GitHub user not found',
   },
 }

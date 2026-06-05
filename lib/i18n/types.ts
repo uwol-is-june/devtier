@@ -165,5 +165,6 @@ export type Translations = {
     copyLink: string
     linkCopied: string
     radarTitle: string
+    notFound: string
   }
 }
