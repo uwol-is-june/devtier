@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { TierIcon } from '@/components/TierIcon'
 import { useT } from '@/context/LangContext'
 
@@ -47,77 +46,21 @@ export function RankingTable({ initialRows, myData, total }: Props) {
   const [rows, setRows] = useState<RankingUser[]>(initialRows)
   const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [selectedLang, setSelectedLang] = useState<string>('')
-  const [filteredTotal, setFilteredTotal] = useState<number>(total)
-  const [languages, setLanguages] = useState<string[]>([])
   const { t, locale } = useT()
   const localeStr = locale === 'ko' ? 'ko-KR' : 'en-US'
-  const searchParams = useSearchParams()
-  const router = useRouter()
 
   const myGithubId = myData?.github_id
-
-  // load available languages once
-  useEffect(() => {
-    fetch('/api/ranking/languages')
-      .then((r) => r.json())
-      .then(({ languages: langs }: { languages: { lang: string }[] }) => {
-        setLanguages(langs.map((l) => l.lang))
-      })
-      .catch(() => {/* ignore if column not yet migrated */})
-  }, [])
-
-  // apply URL param on mount
-  useEffect(() => {
-    const lang = searchParams.get('language') ?? ''
-    if (lang) {
-      setSelectedLang(lang)
-      fetchFiltered(lang)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  async function fetchFiltered(lang: string) {
-    setLoading(true)
-    const url = lang ? `/api/ranking?language=${encodeURIComponent(lang)}` : '/api/ranking'
-    const res = await fetch(url)
-    const json = await res.json()
-    setRows(json.users ?? [])
-    setFilteredTotal(json.total ?? 0)
-    setExpanded(true)
-    setLoading(false)
-  }
-
-  async function handleLangChange(lang: string) {
-    setSelectedLang(lang)
-    setExpanded(false)
-
-    if (!lang) {
-      setRows(initialRows)
-      setFilteredTotal(total)
-      router.push('/#ranking', { scroll: false })
-      return
-    }
-
-    await fetchFiltered(lang)
-    router.push(`/?language=${encodeURIComponent(lang)}#ranking`, { scroll: false })
-  }
 
   async function handleToggle() {
     if (!expanded) {
       setLoading(true)
-      const url = selectedLang
-        ? `/api/ranking?language=${encodeURIComponent(selectedLang)}`
-        : '/api/ranking'
-      const res = await fetch(url)
+      const res = await fetch('/api/ranking')
       const json = await res.json()
       setRows(json.users)
-      setFilteredTotal(json.total)
       setExpanded(true)
       setLoading(false)
     } else {
-      setRows(selectedLang ? rows : initialRows)
-      if (!selectedLang) setFilteredTotal(total)
+      setRows(initialRows)
       setExpanded(false)
     }
   }
@@ -134,64 +77,6 @@ export function RankingTable({ initialRows, myData, total }: Props) {
 
   return (
     <div>
-      {/* Language filter */}
-      {languages.length > 0 && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.6rem',
-          marginBottom: '0.75rem',
-          flexWrap: 'wrap',
-        }}>
-          <span style={{
-            fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-            fontSize: '0.55rem',
-            letterSpacing: '0.18em',
-            color: 'rgba(124,255,91,0.45)',
-          }}>
-            {t.rankingTable.langFilter}
-          </span>
-          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => handleLangChange('')}
-              style={{
-                fontFamily: "var(--font-orbitron), 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
-                fontSize: '0.55rem',
-                letterSpacing: '0.1em',
-                padding: '0.25rem 0.65rem',
-                borderRadius: '100px',
-                border: selectedLang === '' ? '1px solid rgba(124,255,91,0.6)' : '1px solid rgba(255,255,255,0.12)',
-                background: selectedLang === '' ? 'rgba(124,255,91,0.12)' : 'transparent',
-                color: selectedLang === '' ? '#7CFF5B' : 'rgba(255,255,255,0.45)',
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-              }}
-            >
-              {t.rankingTable.allLangs}
-            </button>
-            {languages.map((lang) => (
-              <button
-                key={lang}
-                onClick={() => handleLangChange(lang)}
-                style={{
-                  fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-                  fontSize: '0.7rem',
-                  padding: '0.25rem 0.65rem',
-                  borderRadius: '100px',
-                  border: selectedLang === lang ? '1px solid rgba(124,255,91,0.6)' : '1px solid rgba(255,255,255,0.12)',
-                  background: selectedLang === lang ? 'rgba(124,255,91,0.12)' : 'transparent',
-                  color: selectedLang === lang ? '#7CFF5B' : 'rgba(255,255,255,0.45)',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {lang}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div
         className="rounded-md overflow-hidden"
         style={{
@@ -374,7 +259,7 @@ export function RankingTable({ initialRows, myData, total }: Props) {
           </table>
         </div>
 
-        {!selectedLang && filteredTotal > 20 && (
+        {total > 20 && (
           <div
             className="flex justify-center py-3"
             style={{ borderTop: '1px solid rgba(124,255,91,0.1)' }}

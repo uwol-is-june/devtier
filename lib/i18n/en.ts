@@ -183,8 +183,6 @@ export const en: Translations = {
     loading: 'Loading...',
     expand: 'Show All',
     collapse: 'Collapse ↑',
-    langFilter: 'Language',
-    allLangs: 'All',
   },
   achievements: {
     title: 'Achievements',

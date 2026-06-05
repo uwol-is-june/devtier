@@ -183,8 +183,6 @@ export const ko: Translations = {
     loading: '불러오는 중...',
     expand: '펼쳐보기',
     collapse: '접기 ↑',
-    langFilter: '언어 필터',
-    allLangs: '전체',
   },
   achievements: {
     title: '도전과제',

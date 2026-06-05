@@ -119,8 +119,6 @@ export type Translations = {
     loading: string
     expand: string
     collapse: string
-    langFilter: string
-    allLangs: string
   }
   achievements: {
     title: string
